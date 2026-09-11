@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>操作マニュアル｜アカゲラ家計簿</title>
+<style>
+  :root { --bg:#f6f3ef; --card:#fffcf7; --text:#443c34; --sub:#7a6d60;
+          --border:#e7e1d9; --accent:#9e5e25; --faint:#fbf3e9; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+         line-height:1.9; font-size:16px; }
+  main { max-width:760px; margin:0 auto; padding:24px 20px 96px; background:var(--card);
+         border-left:1px solid var(--border); border-right:1px solid var(--border); }
+  h1 { font-size:1.45rem; margin:1.8em 0 .5em; padding-top:.6em;
+       border-top:2px solid var(--border); }
+  h1:first-of-type { border-top:none; padding-top:0; margin-top:0; }
+  h2 { font-size:1.1rem; margin:1.8em 0 .5em; color:var(--accent); }
+  h3 { font-size:1rem; margin:1.4em 0 .3em; }
+  p { margin:.5em 0; }
+  a { color:var(--accent); }
+  code { background:var(--faint); padding:.1em .35em; border-radius:4px; font-size:.9em; }
+  pre { background:var(--faint); border:1px solid var(--border); border-radius:8px;
+        padding:12px 14px; overflow-x:auto; font-size:.84rem; line-height:1.7;
+        white-space:pre-wrap; word-break:break-word; }
+  pre code { background:none; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:1em 0; font-size:.92rem; }
+  th, td { border:1px solid var(--border); padding:.5em .6em; text-align:left;
+           vertical-align:top; }
+  th { background:var(--faint); font-weight:600; }
+  ul { padding-left:1.3em; margin:.4em 0; }
+  hr { border:none; border-top:1px solid var(--border); margin:2em 0; }
+
+  /* 検索と目次 */
+  .bar { position:sticky; top:0; z-index:5; background:var(--card);
+         padding:12px 0 10px; border-bottom:1px solid var(--border); }
+  .bar input { width:100%; font-size:1rem; padding:10px 12px;
+               border:1px solid var(--border); border-radius:8px;
+               background:var(--bg); color:var(--text); }
+  .bar input:focus { outline:2px solid var(--accent); outline-offset:-2px; }
+  .hint { font-size:.82rem; color:var(--sub); margin:.4em 0 0; }
+  #toc { background:var(--faint); border:1px solid var(--border);
+         border-radius:10px; padding:14px 18px; margin:1.4em 0 2em; }
+  .toc-title { font-weight:600; margin-bottom:.4em; }
+  #toc ul { list-style:none; padding-left:0; margin:0; }
+  #toc li.lv1 { margin-top:.5em; font-weight:600; }
+  #toc li.lv2 { padding-left:1.2em; font-size:.93rem; }
+  #toc a { text-decoration:none; }
+  #toc a:hover { text-decoration:underline; }
+  .sec.hide { display:none; }
+  /* 【v902】★目次の項目も隠せるようにする（検索で絞るため） */
+  #toc li.hide { display:none; }
+  /* 【v902】★見つけた言葉に色を塗る。配色の accent に寄せた薄い地の色 */
+  mark.hit { background:#f7dcb4; color:inherit; border-radius:2px; padding:0 1px; }
+  /* 【v902】★いま見ている1件だけ、濃く塗る */
+  mark.hit.now { background:var(--accent); color:#fff; }
+  .nav { display:none; gap:10px; align-items:center; margin-top:.5em; }
+  .nav.on { display:flex; }
+  .nav button { font-size:.9rem; padding:6px 12px; border-radius:8px;
+                border:1px solid var(--border); background:var(--bg); color:var(--accent); }
+  .nav #pos { font-size:.85rem; color:var(--sub); min-width:5.5em; text-align:center; }
+  #noHit { display:none; color:var(--sub); padding:2em 0; }
+  mark { background:#f7e3c8; color:inherit; }
+  /* ★線アイコン。文字と同じ大きさ・同じ色で並ぶ */
+  .ic { width:1.15em; height:1.15em; vertical-align:-0.2em; }
+  pre .ic { vertical-align:-0.15em; }
+</style>
+</head>
+<body>
+<main>
+<div class="bar">
+  <input id="q" type="search" placeholder="言葉で探す（例：値引き）" autocomplete="off">
+  <p class="hint">その言葉がある章だけを出し、見つけた言葉に色を付けます。<br>〔← 前〕〔次 →〕で1か所ずつ移動できます。文字を消すと、すべての章に戻ります。</p>
+  <div id="nav" class="nav"><button type="button" id="prev">← 前</button><span id="pos"></span><button type="button" id="next">次 →</button></div>
+</div>
+<nav id="toc"><div class="toc-title">目次</div><ul><li class="lv1"><a href="#s0">アカゲラ家計簿 操作マニュアル</a></li><li class="lv1"><a href="#sec1">1. はじめに</a></li><li class="lv2"><a href="#sec1-1">1-1. 最初にすること</a></li><li class="lv2"><a href="#sec1-2">1-2. まず1枚、撮ってみてください</a></li><li class="lv2"><a href="#sec1-3">1-3. 最初から設定されている項目</a></li><li class="lv2"><a href="#sec1-4">1-4. 画面の見かた（ホーム）</a></li><li class="lv1"><a href="#sec2">2. レシートを記録する</a></li><li class="lv2"><a href="#sec2-1">2-1. カメラで撮る</a></li><li class="lv2"><a href="#sec2-2">2-2. 写真から選ぶ</a></li><li class="lv2"><a href="#sec2-3">2-3. 他のアプリから送る</a></li><li class="lv2"><a href="#sec2-4">2-4. 手で入力する</a></li><li class="lv2"><a href="#sec2-5">2-5. まとめて取り込む</a></li><li class="lv1"><a href="#sec3">3. 読み取り結果を直す（レシートの確認）</a></li><li class="lv2"><a href="#sec3-1">3-1. ヘッダーアイコン</a></li><li class="lv2"><a href="#sec3-2">3-2. レシートの項目</a></li><li class="lv2"><a href="#sec3-3">3-3. 候補から選ぶ</a></li><li class="lv2"><a href="#sec3-4">3-4. 読み取れたが取り込まなかった行</a></li><li class="lv2"><a href="#sec3-5">3-5. レシートの画像を見ながら直す</a></li><li class="lv2"><a href="#sec3-6">3-6. 読み違えた場所を指で囲んで読み直す</a></li><li class="lv2"><a href="#sec3-7">3-7. 電卓</a></li><li class="lv2"><a href="#sec3-8">3-8. 明細を直す</a></li><li class="lv2"><a href="#sec3-9">3-9. 税込のお店・税抜のお店</a></li><li class="lv2"><a href="#sec3-10">3-10. 合計が合わないとき</a></li><li class="lv2"><a href="#sec3-11">3-11. 保存する</a></li><li class="lv1"><a href="#sec4">4. 記録を見る</a></li><li class="lv2"><a href="#sec4-1">4-1. レシート一覧</a></li><li class="lv2"><a href="#sec4-2">4-2. 集計グラフ（<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 3.6 L4.2 19.8 L20.2 19.8"/><path d="M7.4 16.4 L11 11.2 L14.2 14 L18.6 7.4"/><circle cx="18.6" cy="7.4" r="1.25" fill="currentColor" stroke="none"/></svg>）</a></li><li class="lv2"><a href="#sec4-3">4-3. チャートタイル</a></li><li class="lv2"><a href="#sec4-4">4-4. アルバム</a></li><li class="lv2"><a href="#sec4-5">4-5. ↕ 上下の入れ替え</a></li><li class="lv1"><a href="#sec5">5. 記録を探す</a></li><li class="lv2"><a href="#sec5-1">5-1. 探しかたの流れ</a></li><li class="lv2"><a href="#sec5-2">5-2. 条件の入れかた</a></li><li class="lv2"><a href="#sec5-3">5-3. 並び順</a></li><li class="lv2"><a href="#sec5-4">5-4. 絞り込んだ分をまとめて直す</a></li><li class="lv1"><a href="#sec6">6. 記録を直す</a></li><li class="lv2"><a href="#sec6-1">6-1. 1枚ずつ直す</a></li><li class="lv2"><a href="#sec6-2">6-2. 画像から読み取り直す・画像だけ削除する</a></li><li class="lv2"><a href="#sec6-3">6-3. 削除する</a></li><li class="lv2"><a href="#sec6-4">6-4. まとめて直す</a></li><li class="lv2"><a href="#sec6-5">6-5. 直すと変わること</a></li><li class="lv1"><a href="#sec7">7. 簡単に記録する（短縮登録）</a></li><li class="lv2"><a href="#sec7-1">7-1. どんなときに使うか</a></li><li class="lv2"><a href="#sec7-2">7-2. 作る</a></li><li class="lv2"><a href="#sec7-3">7-3. 設定できること</a></li><li class="lv2"><a href="#sec7-4">7-4. 記録のされかた</a></li><li class="lv1"><a href="#sec8">8. 自動で記録する（繰返登録）</a></li><li class="lv2"><a href="#sec8-1">8-1. どんなときに使うか</a></li><li class="lv2"><a href="#sec8-2">8-2. 作る</a></li><li class="lv2"><a href="#sec8-3">8-3. 設定できること</a></li><li class="lv2"><a href="#sec8-4">8-4. 記録のされかた</a></li><li class="lv2"><a href="#sec8-5">8-5. あとから変える</a></li><li class="lv1"><a href="#sec9">9. パネルに並べる</a></li><li class="lv2"><a href="#sec9-1">9-1. タイルの種類</a></li><li class="lv2"><a href="#sec9-2">9-2. 動かす</a></li><li class="lv2"><a href="#sec9-3">9-3. ランダム集計</a></li><li class="lv1"><a href="#sec10">10. アカゲラのヒナ</a></li><li class="lv2"><a href="#sec10-1">10-1. 育ちかた</a></li><li class="lv2"><a href="#sec10-2">10-2. 5つの軸</a></li><li class="lv2"><a href="#sec10-3">10-3. 背景</a></li><li class="lv2"><a href="#sec10-4">10-4. セリフ</a></li><li class="lv1"><a href="#sec11">11. マスタを整える</a></li><li class="lv2"><a href="#sec11-1">11-1. 店舗マスタ</a></li><li class="lv2"><a href="#sec11-2">11-2. 商品マスタ</a></li><li class="lv2"><a href="#sec11-3">11-3. カテゴリマスタ</a></li><li class="lv2"><a href="#sec11-3-1">11-3-1. カテゴリのアイコンを変える</a></li><li class="lv2"><a href="#sec11-4">11-4. 支払方法マスタ</a></li><li class="lv2"><a href="#sec11-5">11-5. 税率マスタ</a></li><li class="lv2"><a href="#sec11-6">11-6. マスタを直したときの「過去分」</a></li><li class="lv1"><a href="#sec12">12. 記録のしかた・画面の設定</a></li><li class="lv2"><a href="#sec12-1">12-1. 値引きの割り振り</a></li><li class="lv2"><a href="#sec12-2">12-2. 画面の設定</a></li><li class="lv1"><a href="#sec13">13. データを持ち出す・戻す</a></li><li class="lv2"><a href="#sec13-1">13-1. まるごとバックアップ</a></li><li class="lv2"><a href="#sec13-2">13-2. 書き出す（CSV / JSON）</a></li><li class="lv2"><a href="#sec13-3">13-3. 取り込む（CSV・JSON）</a></li><li class="lv1"><a href="#sec14">14. 困ったときは</a></li><li class="lv2"><a href="#sec14-1">14-1. レシートがうまく読めない</a></li><li class="lv2"><a href="#sec14-2">14-2. ⚠ が消えない</a></li><li class="lv2"><a href="#sec14-3">14-3. 同じ商品が別の名前で記録されている</a></li><li class="lv2"><a href="#sec14-4">14-4. お店の名前がバラバラ</a></li><li class="lv2"><a href="#sec14-5">14-5. 記録を全部消したい</a></li><li class="lv2"><a href="#sec14-6">14-6. 読み取り結果が間違っていないか心配</a></li><li class="lv2"><a href="#sec14-7">14-7. 画面が真っ白になった</a></li><li class="lv1"><a href="#s1509">付録　このアプリが「しないこと」</a></li><li class="lv1"><a href="#s1527">サポート</a></li></ul></nav>
+<p id="noHit">見つかりませんでした。別の言葉でお試しください。</p>
+<h1 id="s0">アカゲラ家計簿 操作マニュアル</h1>
+<p>レシートを撮って、支出を記録する家計簿アプリです。</p>
+<p>記録はすべてこの端末の中だけに保存され、どこにも送信されません。</p>
+<p>★★<strong>銀行やクレジットカードとの連携はできません。</strong></p>
+<p>口座やカードの明細を自動で取り込む機能も、電子マネーの残高を読む機能もありません。</p>
+<p><strong>記録するのは、レシートと、自分で入力した内容だけです。</strong></p>
+<hr>
+<h1 id="sec1">1. はじめに</h1>
+<h2 id="sec1-1">1-1. 最初にすること</h2>
+<p><strong>ありません。</strong></p>
+<p>アプリを開くと、そのまま使えます。</p>
+<p>登録画面はなく、メールアドレスもアカウントも不要です。</p>
+<h2 id="sec1-2">1-2. まず1枚、撮ってみてください</h2>
+<p>財布にあるレシートを1枚、撮ってみてください。</p>
+<pre>
+フッターの <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.6" width="20" height="13.6" rx="3.4"/><path d="M6.4 6.6 L7.9 3.8 L13.1 3.8 L14.6 6.6"/><circle cx="12" cy="13.1" r="4.15"/><circle cx="18.4" cy="10" r="0.85" fill="currentColor" stroke="none"/></svg>〔カメラ〕をタップする
+　↓
+レシート全体が画面に入るように撮る
+</pre>
+<p>読み取ったあと「レシートの確認」が開きます。そのまま保存しても、やめても構いません。</p>
+<p>★お手元にレシートが無い場合は、サンプルで確かめられます。</p>
+<pre>
+ヘッダーアイコンの <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> →「はじめての方へ」→〔サンプルレシートの取り込み〕
+</pre>
+<p>サンプルは架空のお店のレシートです。写真から取り込むときと同じ手順で読み取ります。</p>
+<h2 id="sec1-3">1-3. 最初から設定されている項目</h2>
+<p><strong>カテゴリ</strong>・<strong>税率</strong>・<strong>支払方法</strong>が入っています。</p>
+<h3 id="s27">カテゴリ</h3>
+<p>カテゴリは3つの層でできています。<strong>商品に付けるのは中分類です。</strong></p>
+<pre>
+大分類  18個
+　集計に使う。中分類から自動で決まる
+中分類  66個
+　★商品に付けるのはこれ。1つの商品に1つ
+小分類  0個
+　別の軸で付ける目印。1つの商品にいくつでも
+</pre>
+<p>★使いやすいように編集してください（<a href="#sec11-3">→11-3</a>）。</p>
+<h3 id="s38">大分類</h3>
+<p>食費・日用雑貨・交通など、<strong>大きなくくり</strong>です。18個あります。</p>
+<p><strong>商品に付けるときは選びません。</strong>中分類を選ぶと、その中分類が属する大分類に決まります。</p>
+<p>大分類を使うのは、この4つです。</p>
+<pre>
+月別グラフ
+　12か月の棒を大分類で積み上げます（<a href="#sec4-2">→4-2</a>）
+ホームのチャート
+　「直近12か月」「前年同月比」「カテゴリ別」を大分類で出します（<a href="#sec4-3">→4-3</a>）
+月中比較
+　大分類を選んで比べられます（<a href="#sec4-2">→4-2</a>）
+絞り込み
+　★大分類を選ぶと、配下の中分類を全部含みます（<a href="#sec5-2">→5-2</a>）
+</pre>
+<p>★カテゴリマスタで、<strong>追加・改名・並べ替え・非表示</strong>ができます（<a href="#sec11-3">→11-3</a>）。</p>
+<h3 id="s53">中分類</h3>
+<p><strong>商品に付けるのは、この中分類です。</strong>1つの商品に1つだけ付けられます。66個あります。</p>
+<p>★明細のカテゴリを選ぶ画面では、<strong>中分類と小分類のタブ</strong>が出ます（<a href="#sec3-8">→3-8</a>）。</p>
+<p>　大分類は見出しとして並ぶだけで、選べません。</p>
+<p>★カテゴリマスタで、<strong>追加・改名・並べ替え・非表示</strong>と、</p>
+<p>　<strong>どの大分類に属するかの変更</strong>ができます（<a href="#sec11-3">→11-3</a>）。</p>
+<table>
+<tr><th>大分類</th><th>中分類</th></tr>
+<tr><td><strong>食費</strong></td><td>食料品 ／ 外食 ／ 酒類 ／ 食費その他</td></tr>
+<tr><td><strong>日用雑貨</strong></td><td>消耗品 ／ 化粧品 ／ 生活用品 ／ 日用雑貨その他</td></tr>
+<tr><td><strong>交通</strong></td><td>電車代 ／ バス代 ／ タクシー代 ／ 交通その他</td></tr>
+<tr><td><strong>自動車</strong></td><td>高速料金 ／ 駐車代 ／ ガソリン ／ 自動車用品 ／ 月極駐車場 ／ 自動車税 ／ 車検 ／ 自動車その他</td></tr>
+<tr><td><strong>娯楽</strong></td><td>入場料 ／ ライブ・イベント ／ 音楽 ／ 映像 ／ 書籍 ／ グッズ ／ 運動 ／ 娯楽その他</td></tr>
+<tr><td><strong>医療</strong></td><td>薬・医療品 ／ 病院 ／ 医療その他</td></tr>
+<tr><td><strong>衣服</strong></td><td>洋服 ／ バッグ ／ 靴 ／ アクセサリ ／ 衣服その他</td></tr>
+<tr><td><strong>公共料金</strong></td><td>電気 ／ ガス ／ 水道 ／ NHK ／ 新聞 ／ 公共料金その他</td></tr>
+<tr><td><strong>保険</strong></td><td>保険・年金 ／ 保険その他</td></tr>
+<tr><td><strong>通信</strong></td><td>電話代 ／ 通信その他</td></tr>
+<tr><td><strong>住宅</strong></td><td>家賃 ／ 住宅ローン ／ 火災保険 ／ 住宅その他</td></tr>
+<tr><td><strong>家具・家電</strong></td><td>家具 ／ 家電 ／ 家具・家電その他</td></tr>
+<tr><td><strong>旅行</strong></td><td>宿泊料 ／ 旅行その他</td></tr>
+<tr><td><strong>自転車</strong></td><td>自転車用品 ／ 自転車その他</td></tr>
+<tr><td><strong>美容</strong></td><td>美容院 ／ 美容その他</td></tr>
+<tr><td><strong>交際費</strong></td><td>プレゼント ／ 飲み会 ／ 祝儀・香典 ／ 交際費その他</td></tr>
+<tr><td><strong>教養</strong></td><td>学習・教材 ／ 教養その他</td></tr>
+<tr><td><strong>その他</strong></td><td>その他</td></tr>
+</table>
+<h3 id="s80">小分類</h3>
+<p><strong>最初は1つも入っていません。</strong>必要になったら自分で作ります（<a href="#sec11-3">→11-3</a>）。</p>
+<pre>
+例：ふるさと納税 ／ 贈答用 ／ 特売
+</pre>
+<p>★どの大分類にも属さないので、食費の商品にも日用雑貨の商品にも同じ目印を付けられます。</p>
+<p>★1つの商品に、いくつでも付けられます（<a href="#sec3-8">→3-8</a>）。</p>
+<p>★月別グラフの下段で、小分類ごとの内訳を見られます（<a href="#sec4-2">→4-2</a>）。</p>
+<p>★カテゴリマスタの、いちばん下から作ります（<a href="#sec11-3">→11-3</a>）。</p>
+<h3 id="s89">税率</h3>
+<pre>
+標準10% ／ 軽減8% ／ 非課税0%
+</pre>
+<p>★税率は追加できます。ただし、組み込みの3つは削除できません（<a href="#sec11-5">→11-5</a>）。</p>
+<p>★税込か税抜かは、レシートごとの「税表示」で決まります（<a href="#sec3-9">→3-9</a>）。</p>
+<p>★8%の商品には、商品マスタや店舗マスタでカテゴリが決まっていなければ、</p>
+<p>　中分類「食料品」が自動で付きます（<a href="#sec3-8">→3-8</a>）。</p>
+<p>　付ける中分類は変えられます（<a href="#sec11-5">→11-5</a>）。大分類と小分類は選べません。</p>
+<h3 id="s98">支払方法</h3>
+<pre>
+現金   ★これ1つだけ
+</pre>
+<p>★支払方法は、支払方法マスタに登録した中から選びます（<a href="#sec11-4">→11-4</a>）。</p>
+<p>　ふだん使う支払方法は、先に登録しておいてください。</p>
+<h3 id="s104">マスタが増えるとき</h3>
+<p>お店・商品・支払方法の3つは、増えかたが違います。</p>
+<p>★★<strong>お店</strong>は、レシートを保存すると、その店名が店舗マスタに無ければ</p>
+<p>　新しいお店として登録されます（<a href="#sec11-1">→11-1</a>）。</p>
+<p>★<strong>商品</strong>は、明細の〔＋ 商品マスタに登録〕をタップすると登録されます（<a href="#sec11-2">→11-2</a>）。</p>
+<p>　〔似た商品名を統一〕でも、統一先の商品がまだ無ければ登録されます（<a href="#sec11-2">→11-2</a>）。</p>
+<p>★<strong>支払方法</strong>は、支払方法マスタで登録したときだけ増えます（<a href="#sec11-4">→11-4</a>）。</p>
+<h2 id="sec1-4">1-4. 画面の見かた（ホーム）</h2>
+<p>ホームは5つの段でできています。<strong>この呼び名は、以降の章でもそのまま使います。</strong></p>
+<pre>
+ヘッダー
+　アカゲラ家計簿
+　<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 3.6 L4.2 19.8 L20.2 19.8"/><path d="M7.4 16.4 L11 11.2 L14.2 14 L18.6 7.4"/><circle cx="18.6" cy="7.4" r="1.25" fill="currentColor" stroke="none"/></svg> <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.4" cy="10.4" r="6.3"/><path d="M14.8548 14.8548 L20.1 20.1"/></svg> <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> ← ヘッダーアイコン
+件数バー
+　128件  ?1  ⚠4
+　通算2羽 ・ 今年2羽
+パネル
+　（自分で並べたタイル）
+レシート一覧
+　（レシート）
+フッター
+　<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.6" width="20" height="13.6" rx="3.4"/><path d="M6.4 6.6 L7.9 3.8 L13.1 3.8 L14.6 6.6"/><circle cx="12" cy="13.1" r="4.15"/><circle cx="18.4" cy="10" r="0.85" fill="currentColor" stroke="none"/></svg>〔カメラ〕　<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 13.9 L14.9 5.6"/><path d="M9.2 16.5 L17.5 8.2"/><path d="M14.9 5.6 L16.9 3.6 L19.5 6.2 L17.5 8.2"/><path d="M6.6 13.9 L5.3 17.8 L9.2 16.5" stroke-width="1.55"/><path d="M4.4 21.2 L13.4 21.2"/></svg>〔手入力〕
+　<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.6 2.4 L5.8 13.2 L10.9 13.2 L9.4 21.6 L18.2 10.4 L13.1 10.4 Z"/></svg>〔短縮入力〕　<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" ><path d="M8.4 3.9 L18.6 3.9" /><path d="M18.6 3.9 A2.4 2.4 0 0 1 21.0 6.3" /><path d="M21.0 6.3 L21.0 15.9" /><rect x="3.8" y="7.2" width="14.4" height="13.4" rx="3" /><circle cx="8" cy="11.4" r="1.45" /><path d="M4.6 18.9 L9.3 14.2 L11.6 16.5 L13.6 14.5 L17.4 18.9" /></svg>〔アルバム〕
+</pre>
+<p>★パネルには、チャート表示や短縮ボタンなどの機能を持った<strong>タイル</strong>を自由に配置できます（<a href="#sec9">→9章</a>）。</p>
+<h3 id="s129">件数バー</h3>
+<table>
+<tr><th></th><th>意味</th></tr>
+<tr><td><strong>○○件</strong></td><td>記録したレシートの数</td></tr>
+<tr><td><strong>?○</strong></td><td>合計金額が読み取れていないレシートの数。★検索パネルの〔合計未検出だけ〕で出せます</td></tr>
+<tr><td><strong>⚠○</strong></td><td>明細の合計とレシートの合計が合わないレシートの数。★検索パネルの〔差額ありだけ〕で出せます</td></tr>
+<tr><td><strong>○</strong>（数字だけの印）</td><td>入力待ちの繰返登録の数（予定日が来ているのに、まだ入力していない分）。★あるときだけ出ます。タップで一覧が出て、そこから入力できます（<a href="#sec8-4">→8-4</a>）</td></tr>
+<tr><td><strong>通算○羽 ・ 今年○羽</strong></td><td>アカゲラのヒナを巣立たせた数。★タップで数え方が出ます（<a href="#sec10">→10章</a>）</td></tr>
+</table>
+<h3 id="s138">ヘッダーアイコン</h3>
+<table>
+<tr><th></th><th>タップすると</th></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 3.6 L4.2 19.8 L20.2 19.8"/><path d="M7.4 16.4 L11 11.2 L14.2 14 L18.6 7.4"/><circle cx="18.6" cy="7.4" r="1.25" fill="currentColor" stroke="none"/></svg></td><td>集計グラフが開きます（<a href="#sec4-2">→4-2</a>）</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.4" cy="10.4" r="6.3"/><path d="M14.8548 14.8548 L20.1 20.1"/></svg></td><td>検索パネルが開きます。絞り込み中は地に色が付きます（<a href="#sec5">→5章</a>）</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg></td><td>設定が開きます</td></tr>
+</table>
+<h3 id="s145">フッターボタン</h3>
+<p>画面の下に並ぶ4つのボタンです。〔アルバム〕以外の3つで、レシートを記録します。</p>
+<table>
+<tr><th></th><th>タップすると</th></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.6" width="20" height="13.6" rx="3.4"/><path d="M6.4 6.6 L7.9 3.8 L13.1 3.8 L14.6 6.6"/><circle cx="12" cy="13.1" r="4.15"/><circle cx="18.4" cy="10" r="0.85" fill="currentColor" stroke="none"/></svg>〔カメラ〕</td><td>撮影が始まります（<a href="#sec2-1">→2-1</a>）。★長押しすると、〔写真〕か〔ファイル〕を選んで取り込めます（<a href="#sec2-2">→2-2</a>）</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 13.9 L14.9 5.6"/><path d="M9.2 16.5 L17.5 8.2"/><path d="M14.9 5.6 L16.9 3.6 L19.5 6.2 L17.5 8.2"/><path d="M6.6 13.9 L5.3 17.8 L9.2 16.5" stroke-width="1.55"/><path d="M4.4 21.2 L13.4 21.2"/></svg>〔手入力〕</td><td>空の「レシートの確認」が開きます（<a href="#sec2-4">→2-4</a>）</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.6 2.4 L5.8 13.2 L10.9 13.2 L9.4 21.6 L18.2 10.4 L13.1 10.4 Z"/></svg>〔短縮入力〕</td><td>登録した短縮の一覧が出ます（<a href="#sec7-4">→7-4</a>）</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" ><path d="M8.4 3.9 L18.6 3.9" /><path d="M18.6 3.9 A2.4 2.4 0 0 1 21.0 6.3" /><path d="M21.0 6.3 L21.0 15.9" /><rect x="3.8" y="7.2" width="14.4" height="13.4" rx="3" /><circle cx="8" cy="11.4" r="1.45" /><path d="M4.6 18.9 L9.3 14.2 L11.6 16.5 L13.6 14.5 L17.4 18.9" /></svg>〔アルバム〕</td><td>撮ったレシート画像を並べて見られます（<a href="#sec4-4">→4-4</a>）</td></tr>
+</table>
+<hr>
+<h1 id="sec2">2. レシートを記録する</h1>
+<p>ふだんの記録のしかたは5つです。</p>
+<pre>
+カメラで撮る ／ 写真から選ぶ ／ 他のアプリから送る ／ 手で入力する ／ 短縮入力
+</pre>
+<p>★ほかに、CSV・JSONの取り込み（<a href="#sec13-3">→13-3</a>）、繰返登録の自動記録（<a href="#sec8">→8章</a>）、</p>
+<p>　一覧の長押しの「コピーして新規作成」（<a href="#sec4-1">→4-1</a>）でも記録できます。</p>
+<h2 id="sec2-1">2-1. カメラで撮る</h2>
+<pre>
+フッターの <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.6" width="20" height="13.6" rx="3.4"/><path d="M6.4 6.6 L7.9 3.8 L13.1 3.8 L14.6 6.6"/><circle cx="12" cy="13.1" r="4.15"/><circle cx="18.4" cy="10" r="0.85" fill="currentColor" stroke="none"/></svg>〔カメラ〕をタップする
+　↓
+レシート全体が画面に入るように撮影する
+〔撮影〕
+　↓
+（読み取り中。長いレシートは少し時間がかかります）
+　↓
+「レシートの確認」が開く
+</pre>
+<p>★読み取り中は〔読み取りを中止〕でやめられます。いま読んでいる1枚が終わったところで止まります。</p>
+<p>★<strong>レシート全体が画面に入るように</strong>撮ってください。端が切れると合計が読めません。</p>
+<p>★明るい場所で、影が落ちないように。折り目はできるだけ伸ばしてください。</p>
+<h3 id="s176">うまく読めなかったとき</h3>
+<p>★長いレシートは正しく読み取れないことがあります。</p>
+<p>読み取りのあと、次のメッセージが出ることがあります。</p>
+<table>
+<tr><th>メッセージ</th><th>意味</th><th>どうするか</th></tr>
+<tr><td><strong>明細の合計が合いません</strong></td><td>明細を足した額とレシートの合計が違う</td><td>撮り直すか、そのまま進んで手で直す</td></tr>
+<tr><td><strong>うまく読めていないかもしれません</strong></td><td>読めた行が少なすぎる</td><td>〔撮り直す〕〔このまま進む〕から選ぶ</td></tr>
+<tr><td><strong>文字を読み取れませんでした</strong></td><td>何も読めなかった</td><td>撮り直してください</td></tr>
+</table>
+<p>★★<strong>撮り直しても、いちばんうまく読めた1枚を覚えています。</strong></p>
+<p>「明細の合計が合いません」で〔撮影画面に戻る〕を選ぶと、撮り直せます。</p>
+<p>このとき、<strong>それまでで差がいちばん小さかった1枚</strong>を覚えています。</p>
+<p>3回撮って2回目の差がいちばん小さかったなら、そのあと〔このまま使う〕を選ぶと<strong>2回目の1枚が使われます。</strong>最後の1枚が採用されるわけではありません。</p>
+<p>★「合計」と明細の合計が一致した時点で取り込みます（それ以上は聞かれません）。</p>
+<p>★合計や明細が読み取れず、明細の合計と比べられないときも、聞かれずに「レシートの確認」が開きます。</p>
+<p>　そこで直してから保存してください。★撮り直していたときは、比べられた中でいちばん差が小さかった1枚が使われます。</p>
+<h3 id="s192">カメラの許可</h3>
+<p>初めて使うときに聞かれます。許可しない場合でも、写真から選ぶ・手入力は使えます。</p>
+<p>あとから許可するときは、iPhoneの「設定」→「アカゲラ家計簿」→「カメラ」で変えられます。</p>
+<p>★一度許可しなかったあとは、撮影画面にもこの案内が出ます。</p>
+<h2 id="sec2-2">2-2. 写真から選ぶ</h2>
+<pre>
+<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.6" width="20" height="13.6" rx="3.4"/><path d="M6.4 6.6 L7.9 3.8 L13.1 3.8 L14.6 6.6"/><circle cx="12" cy="13.1" r="4.15"/><circle cx="18.4" cy="10" r="0.85" fill="currentColor" stroke="none"/></svg>〔カメラ〕を長押し →〔写真〕または〔ファイル〕を選ぶ
+</pre>
+<p>あらかじめ撮影したレシートの写真を読み取ることもできます。</p>
+<p>スキャナから一括で取り込んだレシート画像を読むこともできます。</p>
+<p>★★<strong>複数枚を選べます。</strong></p>
+<pre>
+1枚だけ選んだとき
+　そのまま「レシートの確認」へ
+2枚以上選んだとき
+　★「まとめて取り込み」の画面へ（<a href="#sec2-5">→2-5</a>）
+</pre>
+<p>★1枚のときは、取り込んだことのあるレシートと重なっていそうなら、先に確認が出ます。</p>
+<h2 id="sec2-3">2-3. 他のアプリから送る</h2>
+<p>写真アプリやメールなどで、レシートの画像を「共有」から<strong>アカゲラ家計簿</strong>に送ると、そのまま取り込めます。</p>
+<p>★2枚以上まとめて送ったときは、「まとめて取り込み」の画面へ（<a href="#sec2-5">→2-5</a>）。</p>
+<p>★「レシートの確認」を開いている最中に送ったときは、その画面を閉じてから取り込みます。</p>
+<h2 id="sec2-4">2-4. 手で入力する</h2>
+<pre>
+フッターの <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 13.9 L14.9 5.6"/><path d="M9.2 16.5 L17.5 8.2"/><path d="M14.9 5.6 L16.9 3.6 L19.5 6.2 L17.5 8.2"/><path d="M6.6 13.9 L5.3 17.8 L9.2 16.5" stroke-width="1.55"/><path d="M4.4 21.2 L13.4 21.2"/></svg>〔手入力〕をタップする
+</pre>
+<p>「レシートの確認」が開きます。日付と時刻には、いまの日時が入っています。</p>
+<p>★撮ったときと同じ画面です（画像が無いので、画像を出す・読み直すアイコンは出ません）。</p>
+<p>　入力のしかたは <a href="#sec3">→3</a> をご覧ください。</p>
+<p>★明細を入れると、合計金額と消費税が自動で入ります（自分で打った値は変えません）。</p>
+<p>★明細が1件も無いと保存できません（<a href="#sec3-11">→3-11</a>）。</p>
+<h2 id="sec2-5">2-5. まとめて取り込む</h2>
+<p>複数のレシート写真を一回で取り込むと、<strong>1枚ずつ確認せずに、まとめて見られます。</strong></p>
+<pre>
+○枚 読み取れました
+
+投入した枚数（任意）「例：15」
+　→ ★何枚入れたつもりかを書いておくと、読めた枚数と合っているかが分かります
+
+✓ 投入枚数と一致しています。
+⚠️ 二度読みの可能性があります
+　〔今回分の重複を1枚にまとめる〕
+　〔重複だけ今回分から外す〕
+
+新しいお店 ○件 を店舗マスタに登録します
+　店名 ／ 営業店名 を直せます
+　★店名が分からないときは、空のままで構いません
+
+読み取ったレシート（タップで確認・編集）
+
+〔すべて破棄〕〔すべて保存〕
+</pre>
+<p>★〔すべて保存〕には、保存する枚数が出ます。</p>
+<p>★重複の疑いが残ったまま〔すべて保存〕をタップすると、もう一度確認が出ます。</p>
+<p>★★<strong>明細の無いレシートがあると、〔すべて保存〕はできません。</strong>その行には「明細なし」と出るので、</p>
+<p>　タップして「レシートの確認」で明細を入れてください（<a href="#sec3-11">→3-11</a>）。</p>
+<p>★1枚ずつ確認しないので、店名のほかは読み取ったまま保存されます。</p>
+<p>　直したいレシートは、一覧でタップして「レシートの確認」で直してください（<a href="#sec6-1">→6-1</a>）。</p>
+<p>★ここで直した店名は、<strong>そのまま店舗マスタに登録されます。</strong></p>
+<p>★★<strong>店名は空のままでも保存できます。</strong>レシート一覧では<strong>「（店名不明）」</strong>と出ます。</p>
+<p>★あとから名前を付ける場合は、ホーム画面の検索パネルで絞り込んで</p>
+<p>　〔まとめて変更〕（<a href="#sec5-4">→5-4</a>）することもできます。</p>
+<p>　名前を変えると、店舗マスタから「（店名不明）」は自動で消えます。</p>
+<hr>
+<h1 id="sec3">3. 読み取り結果を直す（レシートの確認）</h1>
+<p>★★<strong>レシートの読み取りは、すべてが正しく読めるわけではありません。</strong></p>
+<p>保存する前に必ずお確かめください。</p>
+<p>★違っている箇所は、この画面で直せます。</p>
+<p>★手入力・短縮入力・繰返登録で開いたときも、同じ画面です。直しかたは同じです。</p>
+<p>★保存したレシートをあとから直すときは <a href="#sec6">→6章</a></p>
+<pre>
+レシートの確認     <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 L19 3 L19 20.9 L16.2 19 L13.4 20.9 L10.6 19 L7.8 20.9 L5 19 Z"/><path d="M8.2 7.7 L15.8 7.7"/><path d="M8.2 11.4 L15.8 11.4"/><path d="M8.2 15.1 L12.6 15.1"/></svg> <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" ><path d="M6.73 5.72 A8.2 8.2 0 1 0 17.27 5.72" /><path d="M18.38 9.14 L17.27 5.72 L20.84 6.22" /></svg> <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="3" width="14.8" height="18" rx="3"/><rect x="7.6" y="6" width="8.8" height="3.6" rx="2" stroke-width="1.5"/><circle cx="8.3" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="12" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="15.7" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="8.3" cy="17.6" r="0.95" fill="currentColor" stroke="none"/><circle cx="12" cy="17.6" r="0.95" fill="currentColor" stroke="none"/><circle cx="15.7" cy="17.6" r="0.95" fill="currentColor" stroke="none"/></svg> <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 6.3 L20.6 6.3"/><path d="M9 6.3 L9 4.4 L9.6 3.7 L14.4 3.7 L15 4.4 L15 6.3"/><path d="M5.7 6.3 L6.6 19.1 L7.9 20.3 L16.1 20.3 L17.4 19.1 L18.3 6.3"/><path d="M10.1 10.1 L10.1 16.5"/><path d="M13.9 10.1 L13.9 16.5"/></svg>
+
+店名 ／ 営業店名 ／ 日付 ／ 時刻
+合計金額 ／ うち消費税 ／ 税表示
+支払方法 ／ 支払金額
+
+明細合計 ¥1,852 ／ 合計 ¥2,140
+⚠ ¥288 合いません
+
+商品明細
+（1品ずつ）
+
+〔キャンセル〕〔短縮・繰返登録〕〔保存〕
+</pre>
+<h2 id="sec3-1">3-1. ヘッダーアイコン</h2>
+<p>★<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 L19 3 L19 20.9 L16.2 19 L13.4 20.9 L10.6 19 L7.8 20.9 L5 19 Z"/><path d="M8.2 7.7 L15.8 7.7"/><path d="M8.2 11.4 L15.8 11.4"/><path d="M8.2 15.1 L12.6 15.1"/></svg> は、画像があるときだけ出ます。</p>
+<p>★<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" ><path d="M6.73 5.72 A8.2 8.2 0 1 0 17.27 5.72" /><path d="M18.38 9.14 L17.27 5.72 L20.84 6.22" /></svg> と <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 6.3 L20.6 6.3"/><path d="M9 6.3 L9 4.4 L9.6 3.7 L14.4 3.7 L15 4.4 L15 6.3"/><path d="M5.7 6.3 L6.6 19.1 L7.9 20.3 L16.1 20.3 L17.4 19.1 L18.3 6.3"/><path d="M10.1 10.1 L10.1 16.5"/><path d="M13.9 10.1 L13.9 16.5"/></svg> は、<strong>保存したレシートを開き直したときだけ</strong>出ます</p>
+<p>　（撮った直後や、写真から取り込んだ直後には出ません）。</p>
+<table>
+<tr><th></th><th>できること</th></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 L19 3 L19 20.9 L16.2 19 L13.4 20.9 L10.6 19 L7.8 20.9 L5 19 Z"/><path d="M8.2 7.7 L15.8 7.7"/><path d="M8.2 11.4 L15.8 11.4"/><path d="M8.2 15.1 L12.6 15.1"/></svg></td><td>レシートの画像を出す・隠す</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" ><path d="M6.73 5.72 A8.2 8.2 0 1 0 17.27 5.72" /><path d="M18.38 9.14 L17.27 5.72 L20.84 6.22" /></svg></td><td>もう一度、画像から読み取り直す（<a href="#sec6-2">→6-2</a>）</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="3" width="14.8" height="18" rx="3"/><rect x="7.6" y="6" width="8.8" height="3.6" rx="2" stroke-width="1.5"/><circle cx="8.3" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="12" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="15.7" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="8.3" cy="17.6" r="0.95" fill="currentColor" stroke="none"/><circle cx="12" cy="17.6" r="0.95" fill="currentColor" stroke="none"/><circle cx="15.7" cy="17.6" r="0.95" fill="currentColor" stroke="none"/></svg></td><td>電卓を出す</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 6.3 L20.6 6.3"/><path d="M9 6.3 L9 4.4 L9.6 3.7 L14.4 3.7 L15 4.4 L15 6.3"/><path d="M5.7 6.3 L6.6 19.1 L7.9 20.3 L16.1 20.3 L17.4 19.1 L18.3 6.3"/><path d="M10.1 10.1 L10.1 16.5"/><path d="M13.9 10.1 L13.9 16.5"/></svg></td><td>画像だけを削除する（<a href="#sec6-2">→6-2</a>）</td></tr>
+</table>
+<h3 id="s288"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 L19 3 L19 20.9 L16.2 19 L13.4 20.9 L10.6 19 L7.8 20.9 L5 19 Z"/><path d="M8.2 7.7 L15.8 7.7"/><path d="M8.2 11.4 L15.8 11.4"/><path d="M8.2 15.1 L12.6 15.1"/></svg> レシートの画像を出す・隠す</h3>
+<p>撮影したレシートが画面に浮かびます。見比べながら入力できます（<a href="#sec3-5">→3-5</a>）。</p>
+<h3 id="s290"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="3" width="14.8" height="18" rx="3"/><rect x="7.6" y="6" width="8.8" height="3.6" rx="2" stroke-width="1.5"/><circle cx="8.3" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="12" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="15.7" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="8.3" cy="17.6" r="0.95" fill="currentColor" stroke="none"/><circle cx="12" cy="17.6" r="0.95" fill="currentColor" stroke="none"/><circle cx="15.7" cy="17.6" r="0.95" fill="currentColor" stroke="none"/></svg> 電卓を出す</h3>
+<p>式のまま打てる電卓が浮かびます（<a href="#sec3-7">→3-7</a>）。</p>
+<h2 id="sec3-2">3-2. レシートの項目</h2>
+<p>上から順に、それぞれの項目の説明です。商品明細は <a href="#sec3-8">→3-8</a> にあります。</p>
+<h3 id="s294">〔要確認〕の表示</h3>
+<p>項目名の右に出ることがあります。</p>
+<pre>
+出る    その値を**推定で埋めた**とき／**読み取れずに空の**とき
+出ない  印字から読み取れたとき／自分で入れたとき
+</pre>
+<p>★★<strong>間違っているという意味ではありません。</strong></p>
+<p>　「レシートにそう書いてあったわけではない」ということです。</p>
+<p>★見て正しければ、そのままで構いません。</p>
+<p>★空のまま〔要確認〕が出ているときは、レシートを見て入れてください。</p>
+<p>★確かめ終わった項目は、<strong>〔要確認〕をタップすると〔確認済み〕に変わります。</strong></p>
+<p>　もう一度タップすると〔要確認〕に戻ります。</p>
+<p>★保存すると、〔要確認〕はすべて消えます。</p>
+<h3 id="s307">店名 ／ 営業店名</h3>
+<pre>
+店名      お店の名前（例：〇〇マート）
+営業店名  その店の名前（例：静岡店）
+</pre>
+<p>印字から2つに分けて読み取ります。<strong>分けられなかったときは、すべて店名になります。</strong></p>
+<p>★どちらの入力欄も、タップすると候補が出ます（<a href="#sec3-3">→3-3</a>）。</p>
+<p>　店舗マスタに登録した名前が並びます。</p>
+<p>　★文字を打ち始めると、<strong>似ている順</strong>に並び替わります。</p>
+<p>★<strong>〔要確認〕が出るのは店名だけです。</strong>営業店名には出ません。</p>
+<p>　候補は、どちらの入力欄にも出ます。</p>
+<h3 id="s318">日付 ／ 時刻</h3>
+<pre>
+日付  YYYY-MM-DD
+時刻  HH:MM
+</pre>
+<p>★タップすると、回転式で選べます。〔完了〕で決め、〔クリア〕で空にします。</p>
+<p>★★<strong>日付が無いと、月ごとの集計にも継続の記録にも数えられません。</strong></p>
+<p>★★<strong>時刻は、二度読みのチェックに使います。</strong>同じ日付・同じ時刻のレシートが既にあると、</p>
+<p>保存のときに知らせます（<a href="#sec3-11">→3-11</a>）。<strong>時刻が空だと、このチェックは働きません。</strong></p>
+<h3 id="s327">合計金額 ／ うち消費税</h3>
+<p>★どちらもタップで候補が出ます。レシートから読み取れた数字が並びます。</p>
+<p>★★<strong>合計が読めなかったときは、レシートの別の場所から推定して補うことがあります。</strong></p>
+<p>★<strong>このときは〔要確認〕が付きます。</strong>合計金額が0円のときも付きます。</p>
+<h3 id="s331">税表示</h3>
+<pre>
+内税  レシートの明細が税込で印字されている店
+外税  レシートの明細が税抜で印字されている店
+</pre>
+<p>★印字に証拠があるときは自動で決まります（<a href="#sec3-9">→3-9</a>）。</p>
+<p>★★<strong>「混在」は選べません。</strong></p>
+<p>税込・税抜が混ざったレシートは、どちらかに<strong>そろえて</strong>換算してください（<a href="#sec3-9">→3-9</a>）。</p>
+<p>★アプリが自動で「混在」を選んだレシートでは、「混在」も選べます。</p>
+<p>　いったん内税・外税に変えても、<strong>元に戻せます。</strong></p>
+<h3 id="s341">支払方法 ／ 支払金額</h3>
+<p>支払方法は、支払方法マスタに登録された内容から選択します（<a href="#sec11-4">→11-4</a>）。</p>
+<p>★レシートの印字からどう決まるかは <a href="#sec3-3">→3-3</a> にあります。</p>
+<p>★1枚に2つ以上の支払方法があれば、行が増えます（分割払い）。</p>
+<p>〔＋ 支払方法を追加〕で足せます。要らない行は、右の〔削除〕で消せます。</p>
+<p>★★<strong>支払方法が1つのときだけ、合計金額を直すと支払額も一緒に変わります。</strong></p>
+<pre>
+追わない  支払方法が2つ以上  … どう配分するかは、アプリでは決められません
+追わない  支払額を自分で打ったあと
+</pre>
+<h2 id="sec3-3">3-3. 候補から選ぶ</h2>
+<p>商品名・支払方法・店名などの入力欄をタップすると、<strong>候補が出ます。</strong></p>
+<h3 id="s353">商品名</h3>
+<pre>
+＊レジ袋 小             （4回）
+＊レジ袋 ノJヽ          （1回）
+＊レシ袋 小             （1回）
+おかいものバッグ         （2回）
+◆ レジ袋 大             （3回）
+</pre>
+<table>
+<tr><th></th><th>意味</th></tr>
+<tr><td><strong>（2回）</strong></td><td><strong>同じお店で</strong>過去にこの表記で買った回数</td></tr>
+<tr><td><strong>◆</strong></td><td>そのうち、商品マスタに登録済みの商品</td></tr>
+<tr><td><strong>（このレシート）</strong></td><td>このレシートで読み取れたが、明細に取り込まなかった行の名前。先頭に並びます</td></tr>
+</table>
+<p>★★<strong>読み取りが化けていても、そのお店で過去に保存した表記から選べます。</strong></p>
+<p>★候補は、そのお店で買ったことのある名前です。<strong>お店が決まっていないときは、商品名の候補は出ません。</strong></p>
+<p>★回数が出るので、いつも買っている商品を<strong>選びやすくなります。</strong></p>
+<p>★★<strong>商品名を決めると、金額・個数・単価・容量・値引き・メモの候補</strong>も、</p>
+<p>その商品の過去の記録から出てきます。</p>
+<p>★候補が無ければ、次のメッセージが出ます。</p>
+<p>「『○○』に似た候補はありません。すべての候補を似ている順に表示しています。」</p>
+<h3 id="s374">支払方法</h3>
+<pre>
+このお店で使った回数の多い順
+　現金               （12回）
+　クレジットカード    （4回）
+支払方法マスタに登録した支払方法
+　◆ 交通系IC ／ ◆ 商品券
+</pre>
+<h3 id="s382">支払方法の決め方</h3>
+<p>レシートに印字された文字から、次の順で決めます。</p>
+<pre>
+① 印字が、登録済みの支払方法に当てはまる
+　 → ★当てはまったものを使う
+
+② 当てはまらないとき・支払方法の行が読めなかったとき、この順で探して使う
+   ａ ★そのお店で、直近3回のうちいちばん多かったもの
+   ｂ そのお店に決めてある「よく使う支払方法」
+   ｃ ★読めた文字に、よく似た登録済みの支払方法
+   ｄ ★すべてのお店を通して、いちばん多く使っている支払方法（直近200枚）
+
+③ どれも無い → ★空にする
+</pre>
+<p>★★②で入れたときは、<strong>〔要確認〕が付きます。</strong>レシートに書いてあったわけではないためです。</p>
+<p>★ａとｂは、そのお店が店舗マスタにあるときだけ使います。<strong>初めてのお店では、ｃかｄになります。</strong></p>
+<h3 id="s398">支払方法を変えたときは</h3>
+<pre>
+長らく〇〇ペイで払っていたが、△△ペイに変えた
+  ↓
+★2回ほどで、△△ペイが自動で選ばれるようになります
+</pre>
+<p><strong>直近3回しか見ないので、変えたことにすぐ追いつきます。</strong></p>
+<p>★逆に、いつも〇〇ペイのお店で1回だけ現金で払っても、</p>
+<p>　次からはまた〇〇ペイに戻ります。</p>
+<h3 id="s407">営業店名ごとではなく、店名ごとです</h3>
+<p>同じ店名なら、<strong>営業店名が違っても同じ扱い</strong>になります。</p>
+<p>★③で空になったときは、「レシートの確認」で候補から選べます。</p>
+<h3 id="s410">印字だけでは分からないお店</h3>
+<p>お店によっては「コード決済」のようにまとめて印字され、<strong>具体的な決済名がレシートに載らない</strong>ことがあります。</p>
+<pre>
+<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> → 店舗マスタ → そのお店 →〔支払方法〕
+</pre>
+<p>★★ここで<strong>よく使う支払方法を決めておくと</strong>、②で使われます。</p>
+<h2 id="sec3-4">3-4. 読み取れたが取り込まなかった行</h2>
+<p>商品明細の下にある〔＋ 明細を追加〕は、ふだんは<strong>空の明細を1行足す</strong>ボタンです。</p>
+<p>★値引きは、明細を足さずに、<strong>その商品の ▼ →「値引き金額」</strong>に入れます（<a href="#sec3-8">→3-8</a>）。</p>
+<p>★明細の合計が合わないときなどで、<strong>読み取れたのに、商品として取り込まなかった行</strong>があると、</p>
+<p>　ボタンに件数が付き、タップするとその行が並びます。本当は商品だった行が混じっていたら、ここから拾えます。</p>
+<p>★★<strong>足すと合計が合う行には、はじめから ✓ が付いています。</strong>選んだ件数のボタンで足します。</p>
+<p>★〔自分で入力〕で、空の明細を1行足せます。</p>
+<h2 id="sec3-5">3-5. レシートの画像を見ながら直す</h2>
+<p><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 L19 3 L19 20.9 L16.2 19 L13.4 20.9 L10.6 19 L7.8 20.9 L5 19 Z"/><path d="M8.2 7.7 L15.8 7.7"/><path d="M8.2 11.4 L15.8 11.4"/><path d="M8.2 15.1 L12.6 15.1"/></svg> をタップすると、画像が<strong>画面に浮かびます。</strong></p>
+<pre>
+レシート画像（ここを掴んで移動）  〔閉じる〕
+〔見る〕〔範囲読み取り〕
+（画像）
+🔍 拡大中：この拡大のまま「範囲読み取り」で囲めます
+</pre>
+<ul>
+<li><strong>見出しをつまんで、好きな位置へ動かせます</strong></li>
+<li><strong>ピンチで拡大できます</strong></li>
+<li>★★<strong>画像を出したまま、下の入力欄をタップできます。</strong>レシートとアプリを行き来しなくてすみます</li>
+</ul>
+<h2 id="sec3-6">3-6. 読み違えた場所を指で囲んで読み直す</h2>
+<pre>
+1. <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 L19 3 L19 20.9 L16.2 19 L13.4 20.9 L10.6 19 L7.8 20.9 L5 19 Z"/><path d="M8.2 7.7 L15.8 7.7"/><path d="M8.2 11.4 L15.8 11.4"/><path d="M8.2 15.1 L12.6 15.1"/></svg> で画像を出す
+2. 気になる部分をピンチで拡大する
+3. 〔範囲読み取り〕をタップする
+4. 指でその部分を囲む
+</pre>
+<p>囲むと、次の画面が出ます。</p>
+<pre>
+この文字列をどこに設定しますか？
+
+　認識結果（読み取ったまま・タップ不可）
+　　からあげ弁当
+
+　〔うまく囲めなかった／範囲を選び直す〕
+
+　どこに設定するか選んでください
+　　店名 ／ 営業店名 ／ 日付 ／ 時刻
+　　合計金額（数字だけ抜き出します）
+　　消費税（数字だけ抜き出します）
+　　支払方法
+　　＋ 新しい商品明細として追加
+
+　既存の商品名を置き換える
+　　1. 焼きそば
+　　2. ○○
+</pre>
+<p>★金額として入れるときは、<strong>囲んだ範囲に余計な文字が混ざっていても数字だけを抜き出します。</strong></p>
+<p>★うまく囲めなければ、〔うまく囲めなかった／範囲を選び直す〕で何度でもやり直せます。</p>
+<p>★〔支払方法〕を選ぶと、囲んだ文字を<strong>支払方法マスタに照らして</strong>、当てはまった支払方法を入れます</p>
+<p>　（例：「ｸﾚｼﾞｯﾄ」→ 読み取りキーワードからクレジットカード）。当てはまらなければ知らせ、欄は変えません。</p>
+<p>★範囲読み取りで明細を足した直後は、いちばん上に「⟳ 直前に追加した明細を置き換える」が出ます。</p>
+<p>　囲み直して、足したばかりの明細の名前を差し替えられます。</p>
+<h2 id="sec3-7">3-7. 電卓</h2>
+<p><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="3" width="14.8" height="18" rx="3"/><rect x="7.6" y="6" width="8.8" height="3.6" rx="2" stroke-width="1.5"/><circle cx="8.3" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="12" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="15.7" cy="13.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="8.3" cy="17.6" r="0.95" fill="currentColor" stroke="none"/><circle cx="12" cy="17.6" r="0.95" fill="currentColor" stroke="none"/><circle cx="15.7" cy="17.6" r="0.95" fill="currentColor" stroke="none"/></svg> をタップすると、電卓が<strong>画面に浮かびます。</strong></p>
+<pre>
+(198+298)*1.08
+</pre>
+<ul>
+<li><strong>式のまま打てます</strong>（かっこ・かけ算の優先順位に対応）</li>
+<li><strong>ドラッグで好きな位置へ動かせます</strong></li>
+<li>★★<strong>電卓の外側をタップすると、下の入力欄に届きます。</strong></li>
+</ul>
+<p>  計算しながら入力を続けられます</p>
+<h2 id="sec3-8">3-8. 明細を直す</h2>
+<pre>
+☰ を長押しドラッグで並べ替え・左スワイプで削除・▼ で個数・容量・税率・値引き・メモを編集
+</pre>
+<p>▼ を開くと、次の入力欄が出ます。</p>
+<pre>
+個数 ／ 単価 ／ 容量
+税率 ／ 金額 ／ 値引き金額
+写真（撮る・選ぶ・外す）
+メモ（贈答用・返品予定 など）
+＋ 商品マスタに登録             削除
+</pre>
+<p>★商品マスタに登録済みの明細では、〔＊ 商品マスタを編集〕になります。</p>
+<p>★写真を付けると「この明細に付いています」と出ます。<strong>タップで拡大できます</strong></p>
+<p>（どこかをタップすると閉じます）。</p>
+<h3 id="s495">カテゴリを付ける</h3>
+<p>★★<strong>商品名の左のアイコンを短くタップします。</strong></p>
+<pre>
+（アイコンをタップ）
+　↓
+中分類 ／ 小分類 のタブ
+</pre>
+<p>★商品に付けるのは<strong>中分類</strong>で、1つの商品に1つだけです。</p>
+<p>　★いちばん上に<strong>「よく使う中分類」</strong>が出ます。<strong>このお店</strong>の過去の明細のうち、</p>
+<p>　　名前が似ているものに付いていたカテゴリを多い順に並べます。</p>
+<p>★<strong>小分類は、いくつでも付けられます。</strong>「ふるさと納税」「贈答用」のように、</p>
+<p>　費目とは別の切り口で目印を付けるための分類です。</p>
+<p>　★1つも無いときは「小分類がありません。設定 →〔カテゴリマスタ〕の</p>
+<p>　　いちばん下から作れます。」と出ます。</p>
+<p>★カテゴリそのものを増やしたいときは、カテゴリマスタで作ります（<a href="#sec11-3">→11-3</a>）。</p>
+<p>★カテゴリは、次の順で自動で付きます。</p>
+<pre>
+① この画面で付けたカテゴリ  ★いちばん優先されます
+② 商品マスタに決めたカテゴリ（<a href="#sec11-2">→11-2</a>）
+③ 店舗マスタに決めたカテゴリ（<a href="#sec11-1">→11-1</a>）
+④ 税率が8%の商品           ★税率マスタで決めた中分類（<a href="#sec11-5">→11-5</a>）
+</pre>
+<p>★★**この画面で付けたカテゴリは、あとで商品マスタや店舗マスタを直しても</p>
+<p>　上書きされません**（<a href="#sec11-6">→11-6</a>）。</p>
+<h3 id="s519">値引きがある商品</h3>
+<pre>
+三色サラダ                   476
+                              合計金額（税込）¥308
+  2個 × @143  金額（税抜）¥476  値引 40% −¥190 → 割引後 ¥286
+</pre>
+<p>★元の値段に取り消し線が引かれ、実際に払った額が出ます。</p>
+<p>★★<strong>値引きは、値引かれた商品の ▼ →「値引き金額」に入れてください。</strong></p>
+<p>　その商品のカテゴリから引かれます。</p>
+<p>★「2点で100円引き」のように、<strong>いくつかの商品にまたがる値引き</strong>は、次のどちらかで入れます。</p>
+<pre>
+どれか1つの商品に、まとめて入れる        例：牛乳の値引き金額に 100
+金額の割合で分けて、それぞれに入れる      例：牛乳 ¥600・パン ¥400 なら 60 と 40
+</pre>
+<p>★金額がマイナスの明細（値引きの印が付きます）も入れられます。</p>
+<p>　どの商品の値引きか分からないので、<strong>カテゴリを付けなければ「未分類」から引かれます。</strong></p>
+<p>　左の「？」をタップしてカテゴリを付けると、そのカテゴリから引かれます。</p>
+<p>★読み取りで、値引きの行が商品と結び付かなかったときも、この形になります。</p>
+<h2 id="sec3-9">3-9. 税込のお店・税抜のお店</h2>
+<p>「税表示」の入力欄で <strong>内税／外税</strong> を切り替えられます。</p>
+<pre>
+内税  レシートの明細が税込で印字されている店
+外税  レシートの明細が税抜で印字されている店
+</pre>
+<p>★印字から読み取れるときは自動で判定します。読めなかったときは選んでください。</p>
+<p>★税率は1品ごとに持てるので、<strong>8%と10%が混ざったレシート</strong>もそのまま記録できます。</p>
+<h2 id="sec3-10">3-10. 合計が合わないとき</h2>
+<pre>
+明細合計 ¥1,852（税込表示） ／ 合計 ¥2,140
+
+⚠ 税込明細合計 が 合計と ¥288 合いません
+　（合計の方が多い＝明細に含まれていない金額があるかもしれません）
+</pre>
+<p>★★<strong>差額と、どちらが多いかと、考えられる原因</strong>まで出ます。</p>
+<table>
+<tr><th>どちら</th><th>ありそうなこと</th></tr>
+<tr><td><strong>合計の方が多い</strong></td><td>明細を取りこぼしている</td></tr>
+<tr><td><strong>明細の方が多い</strong></td><td>合計以外の行（小計など）を商品として拾っている</td></tr>
+</table>
+<p>★<strong>誤りを直す手掛かりにしてください。</strong></p>
+<p>★その下に、<strong>明細の税率で計算した税込合計</strong>も出ます（税率の内訳の確かめ）。</p>
+<p>　金額の差額を直してから見てください。</p>
+<p>★差額も税率の食い違いも無いときは、この表示は出ません。</p>
+<h2 id="sec3-11">3-11. 保存する</h2>
+<p>〔保存〕をタップします。次のときは確認が出ます。</p>
+<pre>
+支払日が読み取れません ／ 支払日が未来になっています ／ 支払日が1か月以上前です
+　→ 〔訂正する〕〔このまま保存〕
+同じ日時のレシートがあります
+　→ 二度読みかもしれません。〔やめる〕〔それでも保存〕
+商品明細を入力してください
+　→ 明細が1件もないとき（撮ったレシートも、手入力も）
+　　★合計しか印字されていない紙は〔合計を1行の明細にする〕で1行作れます
+</pre>
+<p>★明細の合計が合わなくても、<strong>確認なしで保存できます。</strong>あとから直せば ⚠ は消えます（<a href="#sec6-1">→6-1</a>）。</p>
+<hr>
+<h1 id="sec4">4. 記録を見る</h1>
+<h2 id="sec4-1">4-1. レシート一覧</h2>
+<p>ホームの<strong>レシート一覧</strong>です（ふだんは下の段。↕ で上下を入れ替えられます <a href="#sec4-5">→4-5</a>）。</p>
+<pre>
+みどりや商店 もりまち店            ¥1,428
+<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="4.6" width="13" height="9.2" rx="2.4"/><path d="M4.6 4.6 L5.6 2.7 L9 2.7 L10 4.6"/><circle cx="8" cy="9.2" r="2.75"/></svg> 2026-09-01 14:32  現金
+</pre>
+<p>先頭のアイコンで、<strong>どうやって記録したか</strong>が分かります。全部で5種類です。</p>
+<table>
+<tr><th>アイコン</th><th>記録した方法</th></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="4.6" width="13" height="9.2" rx="2.4"/><path d="M4.6 4.6 L5.6 2.7 L9 2.7 L10 4.6"/><circle cx="8" cy="9.2" r="2.75"/></svg></td><td>カメラ・写真から取り込んだ</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 13.4 L4 9.6 L11.2 2.6 L13.4 4.8 L6.4 12 Z"/><path d="M4 9.6 L6.4 12"/></svg></td><td>手で入力した</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 1.9 L3.6 8.6 L7.2 8.6 L6 14.1 L12.4 7.4 L8.8 7.4 Z"/></svg></td><td>短縮入力で記録した</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.3 4.02 A4.6 4.6 0 1 1 5.7 4.02" /><path d="M11.8 1.42 L14.46 6.42 L8.8 6.62 Z" fill="currentColor" stroke="none" /></svg></td><td>繰返登録で自動記録された</td></tr>
+<tr><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8 L9.4 8"/><path d="M6.9 5.5 L9.6 8 L6.9 10.5"/><path d="M11.2 3.2 L13.9 3.2 L13.9 12.8 L11.2 12.8"/></svg></td><td>ほかのアプリから移してきた（CSV・JSONの取り込み <a href="#sec13-3">→13-3</a>）</td></tr>
+</table>
+<p>★明細の合計とレシートの合計が合わないと、日付の下に<strong>「⚠️ 明細と差額¥○」</strong>と出ます。</p>
+<p>★合計が読み取れていないと、金額の位置に<strong>「未検出」</strong>と出ます。</p>
+<p>　ホーム画面の検索パネルにある〔合計未検出だけ〕で、絞り込めます（<a href="#sec5-2">→5-2</a>）。</p>
+<ul>
+<li><strong>タップ</strong> … 「レシートの確認」が開きます。直して〔保存〕すると、その記録が書き換わります（<a href="#sec6-1">→6-1</a>）</li>
+<li>★検索で絞り込んでいるときは、一覧の上に「絞り込み中」の帯が出ます（<a href="#sec5-1">→5-1</a>）</li>
+<li><strong>長押し</strong> … メニューが出ます</li>
+<li><strong>左へスワイプ</strong> … 削除します（確認が出ます。保存されている画像も削除されます <a href="#sec6-3">→6-3</a>）</li>
+</ul>
+<pre>
+コピーして新規作成
+　同じ店・同じ明細のまま、日付と時刻を「今」にして「レシートの確認」を開きます
+これで短縮登録を作成
+　このレシートを雛形にして、ホームから1タップで呼び出せるようにします
+</pre>
+<p>レシートの並び替えは、検索パネルの「並び順」から選びます（<a href="#sec5-3">→5-3</a>）。</p>
+<p>★並び順は段を足して重ねられます（例：支払日で並べ、同じ日は合計の大きい順）。段ごとに昇順・降順を選べます。</p>
+<pre>
+レシート  支払日 ／ 時刻 ／ 登録日 ／ 合計 ／ 消費税 ／ 店名
+商品明細  支払日 ／ 時刻 ／ 登録日 ／ 金額(税込) ／ 金額(税抜) ／ 金額(印字) ／
+          単価 ／ 個数 ／ 容量 ／ 商品名 ／ 店名
+</pre>
+<h2 id="sec4-2">4-2. 集計グラフ（<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 3.6 L4.2 19.8 L20.2 19.8"/><path d="M7.4 16.4 L11 11.2 L14.2 14 L18.6 7.4"/><circle cx="18.6" cy="7.4" r="1.25" fill="currentColor" stroke="none"/></svg>）</h2>
+<p>ヘッダーアイコンの <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 3.6 L4.2 19.8 L20.2 19.8"/><path d="M7.4 16.4 L11 11.2 L14.2 14 L18.6 7.4"/><circle cx="18.6" cy="7.4" r="1.25" fill="currentColor" stroke="none"/></svg> をタップするたびに、3段階で変わります。</p>
+<pre>
+1回目  上半分に**月中比較**
+　★レシート一覧を見ながら見られます
+2回目  全画面で**月別グラフ**
+3回目  閉じる
+</pre>
+<p>★★<strong>大きさが変わるだけでなく、出るグラフも変わります。</strong></p>
+<pre>
+月中比較    今月と、比べる月の**同じ日数まで**を並べます
+月別グラフ  上段  選んだ年の12か月を大分類ごとに積み上げた棒グラフ
+　　　　　　下段  上段で選んだ大分類の内訳（中分類／小分類／店舗別）
+</pre>
+<h3 id="s627">月中比較</h3>
+<p>★★<strong>最初は、比べるカテゴリが1つも選ばれていません。</strong></p>
+<p>　「カテゴリ」から、比べたいカテゴリを選んでください（大分類も中分類も選べます）。</p>
+<pre>
+今日が25日なら、今月の1〜25日と、比較する月の1〜25日を並べます。
+比較月の棒は2段になります。
+
+　濃い部分  同じ日（25日）まで
+　薄い部分  そのあと月末まで
+</pre>
+<p>★★<strong>薄い部分が「今月このあといくら使いそうか」の目安</strong>になります。</p>
+<p>次の3つを選べます。</p>
+<pre>
+集計の単位  月別 ／ 年別
+比べる相手  月別  前月比 ／ 3か月前比 ／ 6か月前比 ／ 前年比 ／ 3年前比
+　　　　　　年別  前年比 ／ 2年前比 ／ 3年前比 ／ 5年前比 ／ 10年前比
+　★記録がまだ無い期間は選べません
+カテゴリ    比べるカテゴリを選びます
+</pre>
+<p>★年別にすると、今年の1月1日から今日までと、比べる年の同じ日までを並べます。</p>
+<h3 id="s647">月別</h3>
+<pre>
+上段  選んだ年の12か月を大分類ごとに積み上げた棒グラフ
+下段  上段で選んだ大分類の内訳
+◀ 2026 ▷  年を送る
+</pre>
+<p>★店舗別も見られます。</p>
+<h2 id="sec4-3">4-3. チャートタイル</h2>
+<p>パネルに置いたチャートタイルは、<strong>タップするたびに次の4つへ切り替わります。</strong></p>
+<pre>
+今月の支出（前月比）  今月の今日までの合計と、先月の同じ日までの合計
+直近12か月            月ごとの合計を12か月分並べます
+前年同月比            大分類ごとに、前年同月と今月を並べます
+カテゴリ別            今月の合計を大分類ごとに分けた円グラフ
+</pre>
+<p>★直近12か月・前年同月比・カテゴリ別は、<strong>明細の金額（税込）から</strong>集計します。</p>
+<p>　次のレシートでは、一覧の合計とずれます。</p>
+<pre>
+明細の合計がレシートの合計と合わないレシート（⚠）
+明細が1件も無いレシート（合計だけのもの）
+小計のあとの値引きを「支払方法として扱う」にしたとき（<a href="#sec12-1">→12-1</a>）
+</pre>
+<p>★未分類がマイナスになったとき（値引きの明細 <a href="#sec3-8">→3-8</a>）は、グラフには描かず、金額だけを出します。</p>
+<h2 id="sec4-4">4-4. アルバム</h2>
+<pre>
+フッターの <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" ><path d="M8.4 3.9 L18.6 3.9" /><path d="M18.6 3.9 A2.4 2.4 0 0 1 21.0 6.3" /><path d="M21.0 6.3 L21.0 15.9" /><rect x="3.8" y="7.2" width="14.4" height="13.4" rx="3" /><circle cx="8" cy="11.4" r="1.45" /><path d="M4.6 18.9 L9.3 14.2 L11.6 16.5 L13.6 14.5 L17.4 18.9" /></svg>〔アルバム〕
+</pre>
+<p>写真をまとめて眺められます。2種類あります。</p>
+<pre>
+［レシート］ レシート全体の写真
+［商品］    明細に付けた写真（<a href="#sec3-8">→3-8</a>）
+</pre>
+<p>★★<strong>期間で絞ります。既定は、支払日で今日から過去1年です。</strong></p>
+<p>「いつから」「いつまで」で変えられます。支払日と登録日のどちらで絞るかも選べます。</p>
+<p>★1ページに6枚か24枚を並べます（切り替えられます）。〔‹ 前〕〔次 ›〕で<strong>ページを送ります。</strong></p>
+<p>★商品マスタに付けた写真は、ここには出ません。商品マスタで見られます（<a href="#sec11-2">→11-2</a>）。</p>
+<h2 id="sec4-5">4-5. ↕ 上下の入れ替え</h2>
+<p>ホームは上下2段です。<strong>↕ をタップすると、上下が入れ替わります。</strong></p>
+<pre>
+上段  検索パネル ／ 集計グラフ ／ 短縮登録のタイル
+下段  レシート一覧
+</pre>
+<p>★入れ替えた状態は覚えています。次に開いても同じ並びです。</p>
+<p>★↕ のボタンは、指で好きな場所へ動かせます。置いた場所も覚えています。</p>
+<hr>
+<h1 id="sec5">5. 記録を探す</h1>
+<p>条件を入れて絞り込むと、当てはまるレシートや商品明細が一覧に出て、<strong>件数と金額の合計</strong>が分かります。</p>
+<p>絞り込んだ分は、<strong>まとめて直すこともできます</strong>（<a href="#sec5-4">→5-4</a>）。</p>
+<h2 id="sec5-1">5-1. 探しかたの流れ</h2>
+<pre>
+1. ヘッダーアイコンの <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.4" cy="10.4" r="6.3"/><path d="M14.8548 14.8548 L20.1 20.1"/></svg> をタップする
+2. 上で〔レシートを探す〕か〔商品明細を探す〕を選ぶ
+3. 条件を入れる（<a href="#sec5-2">→5-2</a>）
+4.〔実行〕をタップする
+　　↓
+下の一覧が、当てはまるものだけになります。〔実行〕の横に、件数と金額の合計が出ます。
+</pre>
+<table>
+<tr><th></th><th>一覧に出るもの</th><th>合計に足すもの</th></tr>
+<tr><td><strong>レシートを探す</strong></td><td>レシート1枚ずつ</td><td>レシートの合計金額</td></tr>
+<tr><td><strong>商品明細を探す</strong></td><td>商品1品ずつ</td><td>明細の金額（税込）</td></tr>
+</table>
+<p>★条件を入れただけでは、一覧は変わりません。<strong>〔実行〕をタップしたときに絞り込みます。</strong></p>
+<p>★〔条件をクリア〕で、入れた条件を全部消せます。一覧もすぐ全部に戻ります（並び順はそのまま）。</p>
+<p>★★<strong>絞り込みは、パネルを閉じても、グラフに切り替えても、一覧に残ります。</strong></p>
+<p>　そのあいだは <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.4" cy="10.4" r="6.3"/><path d="M14.8548 14.8548 L20.1 20.1"/></svg> の地に色が付き、一覧の上に帯が出ます。</p>
+<pre>
+絞り込み中　23件（全1,284件）                〔解除〕
+</pre>
+<p>　帯をタップすると検索パネルが開きます。〔解除〕で、全部の一覧に戻ります。</p>
+<p>★件数バーの「○件」は、絞り込んでいても全部の件数です。</p>
+<p>★並び順だけを変えたときは、全部の記録が並ぶので、色も帯も出ません。</p>
+<p>★商品明細を探しているときは、パネルを閉じると一覧がレシートに戻ります。明細の絞り込みは一覧に残りません。</p>
+<h2 id="sec5-2">5-2. 条件の入れかた</h2>
+<h3 id="s721">文字で絞り込む</h3>
+<p>1行が1つの条件です。左から順に選びます。</p>
+<pre>
+［店名 ▼］［含む］［スーパー、コンビニ］［ー ▼］
+　 何を見るか   含む／除く   探す言葉        次の行とのつなぎ
+</pre>
+<p>★<strong>「、」や空白で区切ると、どれか1つを含めば当たります</strong>（例：スーパー、コンビニ）。</p>
+<p>★〔含む〕をタップすると〔除く〕に変わります。〔除く〕の行に当たったものは、<strong>必ず外れます。</strong></p>
+<p>★右の「ー」を <strong>and</strong> か <strong>or</strong> にすると、次の行が足されます（3行まで）。</p>
+<p>　and ならどちらも当てはまるもの、or ならどちらか1つに当てはまるものが出ます。</p>
+<p>見られる項目は、タブによって違います。</p>
+<pre>
+レシートを探す    店名 ／ 営業店名 ／ 商品名 ／ 支払方法 ／ メモ
+商品明細を探す    商品名 ／ 店名 ／ メモ
+</pre>
+<h3 id="s736">期間</h3>
+<pre>
+［支払日 ▼］［いつから］〜［いつまで］
+</pre>
+<p>★支払日（買った日）か、登録日（アプリに記録した日）かを選べます。</p>
+<p>★片方だけ入れてもかまいません。行の足しかたは文字と同じです。</p>
+<h3 id="s742">金額</h3>
+<pre>
+［合計 ▼］［以上］〜［以下］
+</pre>
+<pre>
+レシートを探す    合計 ／ 消費税
+商品明細を探す    金額(税込) ／ 金額(税抜) ／ 金額(印字) ／ 単価 ／ 個数 ／ 容量
+</pre>
+<p>★商品明細の金額は、<strong>どの基準で比べるかを選べます。</strong></p>
+<pre>
+金額(税込)  実際に払った額
+金額(税抜)  税を抜いた額
+金額(印字)  レシートに印字された数字そのまま
+</pre>
+<p>★税込で印字するお店と税抜で印字するお店があるので、「金額(印字)」では<strong>基準の違う金額が混ざります。</strong></p>
+<p>　お店をまたいで比べるときは、「金額(税込)」を選んでください。</p>
+<h3 id="s758">レシートを探すときだけ</h3>
+<pre>
+〔差額ありだけ〕    明細の合計とレシートの合計が合わないレシート（⚠ の付いたもの）
+〔合計未検出だけ〕  合計金額が読み取れていないレシート
+〔画像ありだけ〕    画像のあるレシート（画像をまとめて削除するときに <a href="#sec5-4">→5-4</a>）
+</pre>
+<h3 id="s764">商品明細を探すときだけ</h3>
+<pre>
+カテゴリ    大分類 ／ 中分類 ／ 小分類 ／（未設定）
+商品写真    指定なし ／ 写真あり ／ 写真なし
+</pre>
+<p>★大分類を選ぶと、その中の中分類を全部含みます。小分類も選べます（大分類と同じ段に並びます）。</p>
+<p>★「写真なし」は、これから写真を付けたい明細を探すときに使えます。</p>
+<p>★金額がマイナスの明細（値引き）は、結果に出ません。</p>
+<h3 id="s772">種類をまたぐ条件</h3>
+<p>文字・期間・金額などの<strong>種類をまたぐ条件は、すべてに当てはまるもの</strong>が出ます。</p>
+<h2 id="sec5-3">5-3. 並び順</h2>
+<p>「並び順」で、一覧の並べかたを選びます。段を重ねられ、段ごとに昇順・降順を選べます（<a href="#sec4-1">→4-1</a>）。</p>
+<h2 id="sec5-4">5-4. 絞り込んだ分をまとめて直す</h2>
+<p>★★<strong>〔実行〕で結果が1件以上出たあとに、押せるようになります。</strong>対象が決まらないためです。</p>
+<p>★★<strong>元に戻す機能はありません。</strong>件数を確かめてから実行してください。</p>
+<pre>
+レシートを探す    「項目」（店名 ／ 営業店名 ／ 税表示 ／ 支払方法 ／ 画像を削除）を選んで〔まとめて変更〕
+商品明細を探す    〔カテゴリをまとめて変更〕
+</pre>
+<h3 id="s783">店名・営業店名</h3>
+<p><strong>読み違えで店名がバラバラになったとき</strong>に使います。読み違えた店名で絞り込み、正しい店名にまとめます。</p>
+<pre>
+店名・営業店名をまとめて変更
+
+　店名      一覧から選ぶ／新しく作る
+　営業店名
+　　入力する ／〔営業店名を空にする〕
+　いまの対象の内訳
+　★この操作でレシートが0件になる店名
+　　（実行すると、その店名を店舗マスタから削除します）
+　〔確認して実行〕
+</pre>
+<p>★直るのは、いま絞り込んだレシートだけです。<strong>これから読み取るレシートには効きません。</strong></p>
+<p>★項目で「営業店名」を選ぶと、店名はそのままで、営業店名だけを変えられます。</p>
+<h3 id="s798">税表示・支払方法</h3>
+<pre>
+　税表示（外税／内税）
+　支払方法  マスタから選ぶ
+　〔実行する〕
+</pre>
+<p>★たとえば、同じお店のレシートの税表示がまとめて逆に読み取られていたときや、</p>
+<p>　支払方法をまとめて付け直したいときに使います。</p>
+<h3 id="s806">画像を削除</h3>
+<p><strong>レシートの画像だけをまとめて削除します。</strong>レシートの記録（店名・金額・明細）は残ります。</p>
+<p>画像が増えてバックアップが大きくなったときに使います。</p>
+<pre>
+〔画像ありだけ〕と期間などで絞り込む →〔実行〕
+　↓
+項目で「画像を削除」を選ぶ →〔まとめて変更〕
+　↓
+画像をまとめて削除しますか
+　絞り込んだ ○件 のレシートの画像を削除します（およそ ○MB）。
+〔やめる〕／ 削除する件数のボタン（例：「128件の画像を削除」）
+</pre>
+<p>★削除した画像は戻せません。そのレシートは、画像からの読み取り直し・範囲読み取りができなくなります（<a href="#sec6-2">→6-2</a>）。</p>
+<p>★画像の無いレシートには何もしません。</p>
+<h3 id="s820">カテゴリ</h3>
+<p>★絞り込んだ明細の<strong>中分類</strong>を同じ中分類に付け替えます。「レシートの確認」と同じ選択画面で選びます（<a href="#sec3-8">→3-8</a>）。</p>
+<p>★★<strong>付いている小分類は、そのまま残ります。</strong>中分類を外すことはできません。</p>
+<p>中分類を選ぶと、確認画面で2つから選べます。</p>
+<pre>
+〔変更する〕         1件ずつ手で付けたカテゴリは、そのまま残します
+〔手動設定も上書き〕  手で付けたカテゴリも書き換えます
+</pre>
+<p>★明細の数によっては時間がかかります。</p>
+<hr>
+<h1 id="sec6">6. 記録を直す</h1>
+<p>保存したレシート（記録）をあとから直す方法です。</p>
+<p>★項目や明細の直しかたは、3章と同じです。</p>
+<h2 id="sec6-1">6-1. 1枚ずつ直す</h2>
+<pre>
+一覧でレシートをタップする
+　↓
+「レシートの確認」が開く → 直す（<a href="#sec3">→3</a>）
+　↓
+〔保存〕
+</pre>
+<p>★★<strong>〔保存〕すると、同じ記録が書き換わります。</strong>記録は増えません。</p>
+<p>★〔キャンセル〕で閉じれば、元の記録のままです。</p>
+<p>保存する前に直すときとは、次のところが違います。</p>
+<table>
+<tr><th></th><th>保存する前</th><th>保存したあと（この章）</th></tr>
+<tr><td>〔保存〕</td><td>記録が1件増える</td><td>同じ記録が書き換わる</td></tr>
+<tr><td>〔キャンセル〕</td><td>記録にならない</td><td>元の記録のまま</td></tr>
+<tr><td>ヘッダーのアイコン</td><td>画像を出す・電卓</td><td>それに加えて、読み取り直し・画像だけ削除（<a href="#sec6-2">→6-2</a>）</td></tr>
+<tr><td>同じ日時の確認</td><td>保存済みの記録と比べる</td><td>自分自身は除いて比べる</td></tr>
+<tr><td>登録日</td><td>この保存の日になる</td><td>変わらない（最初に保存した日のまま）</td></tr>
+</table>
+<p>★登録日が変わらないので、あとから直しても、アカゲラのヒナの[迅速]は最初に保存した日で数えます（<a href="#sec10-2">→10-2</a>）。</p>
+<h2 id="sec6-2">6-2. 画像から読み取り直す・画像だけ削除する</h2>
+<p>保存したレシートを開いたときだけ、ヘッダーに2つのアイコンが出ます（<a href="#sec3-1">→3-1</a>）。</p>
+<p>★何枚もの画像をまとめて削除するときは、検索で絞り込んでから行います（<a href="#sec5-4">→5-4</a>）。</p>
+<h3 id="s856"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" ><path d="M6.73 5.72 A8.2 8.2 0 1 0 17.27 5.72" /><path d="M18.38 9.14 L17.27 5.72 L20.84 6.22" /></svg> もう一度、画像から読み取り直す</h3>
+<p>タップすると、次の確認画面が出ます。</p>
+<pre>
+画像から読み取り直しますか？
+この画面での編集内容は破棄され、保存されている画像から
+読み取り直した結果に置き換わります（〔保存〕するまで、記録は変わりません）。
+</pre>
+<p>★★読み直して<strong>かえって悪くなったときは、その場で知らせます。</strong></p>
+<pre>
+読み直したら、かえって悪くなりました
+合計と明細の差が ¥288 → ¥1,040 に広がりました。
+
+まだ保存していません。［キャンセル］で閉じれば、前の内容がそのまま残ります。
+</pre>
+<p>★<strong>読み直した結果は、そのまま画面に残ります。</strong>〔キャンセル〕でこの画面を閉じれば、</p>
+<p>　読み直す前の内容が残ります。読み直した結果でよければ〔保存〕をタップします。</p>
+<h3 id="s872"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 6.3 L20.6 6.3"/><path d="M9 6.3 L9 4.4 L9.6 3.7 L14.4 3.7 L15 4.4 L15 6.3"/><path d="M5.7 6.3 L6.6 19.1 L7.9 20.3 L16.1 20.3 L17.4 19.1 L18.3 6.3"/><path d="M10.1 10.1 L10.1 16.5"/><path d="M13.9 10.1 L13.9 16.5"/></svg> 画像だけを削除する</h3>
+<p><strong>レシートの記録は残ります。</strong>保存されている画像データだけを消します。</p>
+<p>タップすると、次の確認画面が出ます。</p>
+<pre>
+画像だけを削除しますか？
+レシートの記録は残したまま、保存されている画像データだけを削除します。
+この操作は元に戻せません
+（以後、再読込み・範囲指定の読み取りはできなくなります）。
+</pre>
+<p>★画像データが溜まりすぎると、端末の容量を圧迫する恐れがあります。</p>
+<p>　必要に応じて削除してください。</p>
+<h2 id="sec6-3">6-3. 削除する</h2>
+<pre>
+一覧で、レシートを左へスワイプする →「削除しますか？」→〔削除〕
+</pre>
+<p>★保存されている画像も削除されます。</p>
+<p>★そのお店のレシートが1枚も無くなると、店名は店舗マスタから自動で消えます（<a href="#sec11-1">→11-1</a>）。</p>
+<h2 id="sec6-4">6-4. まとめて直す</h2>
+<p>何枚もの記録を一度に直す方法は、ほかの章にあります。</p>
+<pre>
+検索で絞り込んだ分をまとめて変更する          <a href="#sec5-4">→5-4</a>
+マスタを直したときに、過去の記録も更新する      <a href="#sec11-6">→11-6</a>
+繰返登録の開始日・終了日を変えて、さかのぼる・消す  <a href="#sec8-5">→8-5</a>
+</pre>
+<p>★値引きの割り振りの設定（<a href="#sec12-1">→12-1</a>）を変えても、保存済みの記録は変わりません。</p>
+<h2 id="sec6-5">6-5. 直すと変わること</h2>
+<pre>
+明細の合計とレシートの合計が合えば、⚠ が消える（<a href="#sec3-10">→3-10</a>）
+カテゴリ別やグラフに、直した内容で入る
+今月・先月に買ったレシートなら、アカゲラのヒナの[一致]が上がる（<a href="#sec10-2">→10-2</a>）
+店名を変えて、元の店名のレシートが0件になると、元の店名は店舗マスタから消える
+直した店名・合計の行・支払方法の行をそのお店の分として覚える（<a href="#sec14-1">→14-1</a>）
+</pre>
+<hr>
+<h1 id="sec7">7. 簡単に記録する（短縮登録）</h1>
+<h2 id="sec7-1">7-1. どんなときに使うか</h2>
+<p>定期的な支出で毎回金額が違うときや、レシートをもらわない支出が多いときに使えます。</p>
+<p><strong>あらかじめ短縮登録をしておくと、支出があったときに、短縮入力から記録できます。</strong></p>
+<pre>
+短縮登録 … 雛形そのものを作る（作る側）
+短縮入力 … 登録した雛形を呼び出して記録する（使う側）
+</pre>
+<h2 id="sec7-2">7-2. 作る</h2>
+<p>作りかたは3つあります。</p>
+<table>
+<tr><th>どこから</th><th>やりかた</th></tr>
+<tr><td><strong>過去のレシートから</strong></td><td>レシート一覧で長押し →〔これで短縮登録を作成〕</td></tr>
+<tr><td><strong>「レシートの確認」から</strong></td><td>〔短縮・繰返登録〕→〔⚡ 短縮登録〕</td></tr>
+<tr><td><strong>一から作る</strong></td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> → 短縮登録マスタ →〔新しく入力して追加〕</td></tr>
+</table>
+<p>★短縮登録には、商品名の入った明細が1件以上要ります。</p>
+<h2 id="sec7-3">7-3. 設定できること</h2>
+<pre>
+短縮名             例：カプチーノ
+
+毎回変わる欄
+　チェックした入力欄だけ、ボタンをタップしたときに聞きます。
+　★ひとつもチェックしなければ、確かめの画面で〔記録する〕を選ぶだけで記録されます。
+　★★明細の金額をチェックすると、合計・消費税額・税抜額は自動計算されます。
+　　初期値                    空欄 ／ 前回の値 ／ 前年同月
+　　過去に入れた値を候補に出す
+
+ホームの短縮パネルに追加
+パネルでの見た目   アイコン ／ 色 ／ 大きさ
+記録する時刻
+　現在時刻を入れる ／ 未入力にする
+</pre>
+<p>★★<strong>「毎回変わる欄」の使い分け</strong></p>
+<p>買うたびに変わる項目だけをチェックします。<strong>変わらない項目は、雛形の値をそのまま使います。</strong></p>
+<pre>
+自動販売機の飲み物
+　レシートが出ない支出。商品も値段も毎回同じ
+　→ 何もチェックしない。タップして〔記録する〕だけで記録
+
+高速道路
+　カテゴリは同じだが、どこからどこまで乗ったかと、料金が毎回変わる
+　→ 商品名と金額をチェック。タップすると2つ聞かれる
+
+水道料金
+　定期的な支出で、カテゴリは同じだが金額が毎回変わる
+　→ 金額をチェック。タップすると金額を聞かれる
+</pre>
+<h3 id="s954">雛形に入るもの</h3>
+<pre>
+店名・営業店名・支払方法・商品明細
+合計・消費税・税の解釈
+</pre>
+<p>★日付と時刻は保存されません。<strong>日付は、呼び出したときの「今日」になります。</strong></p>
+<p>★時刻は、「記録する時刻」で決めたとおりです（現在時刻を入れる ／ 未入力にする）。</p>
+<h2 id="sec7-4">7-4. 記録のされかた</h2>
+<p>使いかたは2つあり、<strong>動きが違います。</strong></p>
+<pre>
+ホームのパネルに置いたボタンをタップする
+　毎回変わる欄が無い  →「『○○』を記録しますか？」→〔記録する〕で記録
+　毎回変わる欄がある  → チェックした欄だけを聞く画面 → 入れて記録
+フッターの <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.6 2.4 L5.8 13.2 L10.9 13.2 L9.4 21.6 L18.2 10.4 L13.1 10.4 Z"/></svg>〔短縮入力〕から選ぶ
+　→「レシートの確認」が開く。直してから〔保存〕で記録
+</pre>
+<p>★パネルのボタンは、<strong>チェックしている項目だけ入力すれば記録できます</strong>（高速道路の商品名と金額など）。</p>
+<p>★パネルのボタンから記録したものは、「レシートの確認」を通りません。</p>
+<p>　同じ日時の確認などは出ないので、直したいときは一覧から開いて直してください（<a href="#sec6-1">→6-1</a>）。</p>
+<p>★どちらで記録しても、一覧では短縮入力のアイコンが付きます（<a href="#sec4-1">→4-1</a>）。</p>
+<hr>
+<h1 id="sec8">8. 自動で記録する（繰返登録）</h1>
+<h2 id="sec8-1">8-1. どんなときに使うか</h2>
+<p>家賃・光熱費・サブスクなど、<strong>決まった周期で来る支出</strong>に使います。</p>
+<p>予定日が来ると、自動で記録します。金額が毎回変わるものは、確かめてから記録できます。</p>
+<table>
+<tr><th>記録のしかた</th><th>向いている支出</th></tr>
+<tr><td><strong>自動で記録</strong></td><td>家賃・サブスクなど、<strong>毎回同じ金額</strong></td></tr>
+<tr><td><strong>確認してから記録</strong></td><td>電気・ガス・水道など、<strong>毎回金額が変わる</strong></td></tr>
+</table>
+<p>★決まった日に来ない支出は、短縮登録（<a href="#sec7">→7章</a>）が向いています。</p>
+<h2 id="sec8-2">8-2. 作る</h2>
+<pre>
+<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> → 繰返登録マスタ →〔過去の記録から追加〕または〔新しく入力して追加〕
+</pre>
+<p>★「レシートの確認」の〔短縮・繰返登録〕→「🔁 繰返登録」からも作れます。いま開いているレシートが土台になります。</p>
+<h2 id="sec8-3">8-3. 設定できること</h2>
+<pre>
+繰返名
+周期              毎月 ／ 毎週 ／ 毎年
+
+何か月ごと        （毎月のとき）1なら毎月、2なら2か月に1回。開始日の月から数えます
+
+日にちの決め方
+　日を指定
+　　★29〜31日にすると、日数の少ない月は月末になります
+　月末
+　　その月の最終日（2月なら28日、うるう年は29日）
+　月初（1日）
+曜日              （毎週のとき）
+月／日            （毎年のとき）
+
+予定日が土日・祝日だったら
+　そのまま ／ 前営業日 ／ 翌営業日
+銀行の年末年始休業（12/31〜1/3）
+　考慮しない ／ 考慮する（口座振替）
+
+開始日（省略すると今日から）
+終了日（未定なら空欄）
+
+登録のしかた      自動で記録 ／ 確認してから記録（<a href="#sec8-4">→8-4</a>）
+</pre>
+<p>★祝日は毎年<strong>計算しています。</strong>春分の日・秋分の日・振替休日・国民の休日も、年ごとに求めます。</p>
+<p>　★法律で祝日そのものが変わったときは、アプリの更新が要ります。</p>
+<p>★★どちらの記録のしかたでも、<strong>商品名の入った明細が1件以上要ります</strong>（例：電気代）。</p>
+<p>★水道のように<strong>2か月に1回</strong>の支出も、「何か月ごと」を2にしておけば、</p>
+<p>　記録の無い月に一覧へ出ないので、「今月は無いのが正常」と分かります。</p>
+<h2 id="sec8-4">8-4. 記録のされかた</h2>
+<p>★「自動で記録」は、予定日を過ぎてアプリを開いたときに、そのまま記録されます</p>
+<p>　（「レシートの確認」は通りません）。明細の金額も必要です。</p>
+<p>★「確認してから記録」にすると、予定日が来ても保存されません。次の2か所に出るので、</p>
+<p>　金額を入れてから保存します。金額は、作るときには空のままで構いません。</p>
+<p>　★開いた「レシートの確認」で<strong>明細の行に金額を入れると、合計が自動で入ります。</strong></p>
+<pre>
+アプリを開いたとき  予定日が来た分が、1件ずつ「レシートの確認」で開く
+　　　　　　　　　　 ★〔キャンセル〕で閉じると、次に開いたときにまた出ます
+ホームの件数バー    数字の印が付き、タップすると一覧が出る（<a href="#sec1-4">→1-4</a>）
+</pre>
+<h2 id="sec8-5">8-5. あとから変える</h2>
+<p><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> → 繰返登録マスタ で、作った繰返登録を直せます。</p>
+<p>★直しても、すでに記録したレシートは変わりません。これからの記録に効きます。</p>
+<p>開始日・終了日を変えたときは、過去の記録にも関わるので、確認画面が出ます。</p>
+<table>
+<tr><th>変えたもの</th><th>出る確認</th><th>ボタン</th></tr>
+</table>
+<hr>
+<h1 id="sec9">9. パネルに並べる</h1>
+<p><strong>パネル</strong>（<a href="#sec1-4">→1-4</a>）には、好きなタイルを置いて並べ替えられます。</p>
+<h2 id="sec9-1">9-1. タイルの種類</h2>
+<pre>
+パネルの空いているところを長押し →「ホームに追加」から選ぶ
+
+買い物リスト
+　買い物中にさっと見るためのメモ。★タップすると入力できます
+チャート（4マス）
+　タップで4種類が切り替わります（<a href="#sec4-3">→4-3</a>）
+ランダム集計（4マス）
+　自分の記録から作った1つの事実を出します。タップで引き直し
+アカゲラのヒナ（6マス）
+　★縦3×横2分の空きが必要です（<a href="#sec10">→10章</a>）
+短縮登録
+　まだホームに置いていない短縮登録が並びます
+　タップして〔記録する〕で記録するボタンになります（<a href="#sec7-4">→7-4</a>）
+</pre>
+<h2 id="sec9-2">9-2. 動かす</h2>
+<pre>
+タイルを長押し → 移動モード
+　ドラッグ     動かす
+　四隅を引く   大きさを変える
+　「×」       ホームから外す
+パネルの空いたところをタップ → 移動モードを終える
+</pre>
+<p>★大きさは、タイルごとにいちばん小さい大きさがあります。</p>
+<p>　ヒナは縦3×横2、チャートとランダム集計は2×2より小さくなりません。</p>
+<p>★短縮登録のタイルは、大きさ・色・アイコンも決められます（<a href="#sec7-3">→7-3</a>）。</p>
+<p>★空きが足りないと「パネルがいっぱいです」と出ます。</p>
+<p>　どれかを「×」で外すか、小さくしてから追加してください。</p>
+<h2 id="sec9-3">9-3. ランダム集計</h2>
+<pre>
+「先月の 牛乳 購入本数は 22本 でした」
+「今年、○○ に 47回 行きました」
+「先月の支出は ¥62,180 でした」
+</pre>
+<p>★★<strong>記録が増えると、だんだんマニアックな集計結果を楽しめます。</strong></p>
+<p>★タップするたびに別の集計を表示します。</p>
+<p>★期間は、今月 ／ 先月 ／ 直近7日 ／ 直近30日 ／ 今年 ／ ○年○月 のどれかです。</p>
+<p>　支出の合計・お店に行った回数・商品の数量・カテゴリの金額のどれかを出します。</p>
+<hr>
+<h1 id="sec10">10. アカゲラのヒナ</h1>
+<p>記録を続けると育つ、キツツキのアカゲラです。パネルに置くタイルの1つです（<a href="#sec9-1">→9-1</a>）。</p>
+<p><strong>たまごから巣立つまでの様子を楽しめます。</strong>★外すこともできます。</p>
+<h2 id="sec10-1">10-1. 育ちかた</h2>
+<p><strong>買った日が何日分あるか</strong>で育ちます。</p>
+<pre>
+たまご       0〜3日
+ひび         4〜9日
+かえりたて   10〜15日
+ヒナ         16〜32日
+巣立ち間近   33〜49日
+</pre>
+<p>★★<strong>50日分になると1羽が巣立ち、次のたまごから数え直します。</strong></p>
+<p>★★<strong>一度にたくさん入れても、先へは進みません。</strong></p>
+<p>1日に10枚入れても、1日は1日です。<strong>毎日少しずつのほうが育ちます。</strong></p>
+<p>★繰返登録で自動記録されたレシートと、CSV・JSONで取り込んだレシート（<a href="#sec13-3">→13-3</a>）は数えません。</p>
+<p>★★<strong>数えはじめは、初めて記録を保存した日です。</strong>それより前に買ったレシートは数えません。</p>
+<p>　昔のレシートをまとめて取り込んでも、一気には育ちません。</p>
+<h2 id="sec10-2">10-2. 5つの軸</h2>
+<p>どれも割合（%）で出ます。</p>
+<pre>
+[継続] 今日までの日数のうち、記録した日の割合
+[迅速] 買ってから記録するまでの速さ（当日に記録するほど高い）
+[一致] 明細の合計とレシートの合計が合っているレシートの割合
+[解析] 明細のうち、中分類まで分類できている割合（大分類だけなら半分に数える）
+[短縮] 繰返登録による自動記録の割合
+</pre>
+<p>★★<strong>ヒナが育つのは、記録した日数（通算）です（<a href="#sec10-1">→10-1</a>）。</strong>[継続]は、その月の割合です。</p>
+<p>★[迅速]が高いほど、ヒナが<strong>すばやく動きます</strong>（5段階）。</p>
+<p>★★<strong>5つとも「当月」と「前月」が並びます。</strong>先月より上がったか下がったかが分かります。</p>
+<p>　当月は1日から今日まで、前月は1日から同じ日までで比べます。</p>
+<p>★★[一致]は、<strong>その期間に買ったレシートを直せば上がります。</strong>それより前のレシートを直しても、数字は変わりません。</p>
+<p>[継続]も[迅速]も、過ぎた日は取り返せません。</p>
+<h2 id="sec10-3">10-3. 背景</h2>
+<p>木の幹に残る<strong>古い巣穴</strong>は、<strong>3羽巣立つごとに1つ</strong>増えます（4つまで。12羽からは穴だらけの古木になります）。</p>
+<p>★巣穴は、幹の外から見る場面で見えます。</p>
+<h2 id="sec10-4">10-4. セリフ</h2>
+<p>アカゲラのヒナは森のようすを話します。</p>
+<p>ときどき、絵の枠の外に、記録や見方についての「ひとこと」が出ます。</p>
+<hr>
+<h1 id="sec11">11. マスタを整える</h1>
+<pre>
+<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> → マスタの編集
+</pre>
+<h2 id="sec11-1">11-1. 店舗マスタ</h2>
+<p>お店ごとの設定（除去文字・支払方法・カテゴリ）をします。</p>
+<p>★店名をまとめたいときは、検索で絞り込んで〔まとめて変更〕を使います（<a href="#sec5-4">→5-4</a>）。</p>
+<p>★★<strong>レシートを保存すると、その店名が店舗マスタに無ければ自動で登録されます。</strong></p>
+<p>ほかに、次の場面でも登録されます。</p>
+<pre>
+・複数のレシート写真を一回で取り込み、そのまま登録する（<a href="#sec2-5">→2-5</a>）
+・ホーム画面の検索パネルで絞り込んで〔まとめて変更〕（<a href="#sec5-4">→5-4</a>）
+・CSV・JSONを取り込んだとき
+</pre>
+<p>★そのお店のレシートが1枚も存在しなくなると、<strong>店舗マスタから自動で消えます。</strong></p>
+<pre>
+名前で絞る（漢字の店はこちら）
+（店名 → 営業店名）
+
+〔文字除去〕  ★その店の商品名から取り除きたい文字列（→下の「除去文字とは」）
+〔支払方法〕  その店でよく使う支払方法
+〔カテゴリ〕  その店の採用カテゴリ
+</pre>
+<p>★お店にカテゴリを登録すると、そのお店のレシートを読み取る際に自動でカテゴリが付きます。</p>
+<p>★★<strong>軽減税率の8%の商品にも、このカテゴリが付きます。</strong></p>
+<p>　税率マスタで決めた中分類（<a href="#sec11-5">→11-5</a>）より、お店のカテゴリが優先されます。</p>
+<p>★カテゴリを変えると、過去のレシートをどうするか聞かれます（<a href="#sec11-6">→11-6</a>）。</p>
+<p>★お店が1件も登録されていないときは、次のメッセージが出ます。</p>
+<pre>
+まだお店が登録されていません。複数のレシート写真を一回で取り込んだ直後や、
+検索で絞り込んでから〔店名・営業店名をまとめて変更〕で登録できます。
+</pre>
+<h3 id="s1154">除去文字とは</h3>
+<p>お店によって、商品名の前後に決まった記号や番号が印字されることがあります。</p>
+<p>その名前を登録しておくと、そのお店のレシートを読むたびに自動で取り除かれます。</p>
+<pre>
+〔追加〕→「除去したい文字・文字列を入力」
+（登録済みのルールが一覧に出ます。〔削除〕で消せます）
+</pre>
+<h2 id="sec11-2">11-2. 商品マスタ</h2>
+<p><strong>同じ商品が、店によって違う名前で印字される問題</strong>を解決します。</p>
+<pre>
+みどりや牛乳   ← マスタ商品名
+　　　　　　　　（表示・集計に使う名前）
+　レシート上の表記（別名）
+　　みどりや牛乳 1000ml
+　　ﾐﾄﾞﾘﾔ ｷﾞｭｳﾆｭｳ
+　　みどり乳業 みどりや牛乳
+カテゴリ
+商品の写真
+</pre>
+<p>★粒度は「牛乳」ではなく、<strong>同じメーカーの同じ商品</strong>です。</p>
+<h3 id="s1174">似た商品名をまとめて統一する</h3>
+<pre>
+〔似た商品名を統一〕
+　① 商品名を検索（絞り込み）
+　② 変換後の商品名（候補をタップで入る・編集可）
+　　候補の一覧から、同じ商品を1つずつチェックする
+</pre>
+<p>★候補には<strong>出てきた回数・一致度・お店</strong>が出ます。統一済みのものには「✓統一済み」と出ます。</p>
+<p>★どれを同じ商品名として表示するかを1つずつチェックして決めることができます。</p>
+<p>★★実行すると、商品マスタが次の形になります（②で決めた名前が表示名になります）。</p>
+<pre>
+みどりや牛乳            ← ②で決めた名前。表示と集計に使われます
+　みどりや牛乳 1000ml   ← レシートに印字されていた名前。別名として残ります
+　ﾐﾄﾞﾘﾔ ｷﾞｭｳﾆｭｳ
+</pre>
+<p>★★<strong>レシートに記録した商品名の文字は変わりません。</strong></p>
+<p>　過去のレシートは、商品マスタとのつながり（表示名）だけを結び直します。</p>
+<p>★統一した商品にカテゴリがあるときは、あとで<strong>「過去のレシートのカテゴリも更新しますか」</strong>と聞かれます</p>
+<p>　（〔以降の分だけ〕〔過去分も更新〕<a href="#sec11-6">→11-6</a>）。</p>
+<p>★次に同じ表記を読み取ったときは、自動で同じ商品として扱われます。</p>
+<h3 id="s1194">⚠️ 規格が違います、と出たとき</h3>
+<p>名前は似ているのに、<strong>数字やサイズの言葉が食い違う候補</strong>に出ます。</p>
+<pre>
+バイオ30レジ袋 ／ バイオ50レジ袋
+〇〇クリーム（M） ／ 〇〇クリーム（L）
+</pre>
+<p>★<strong>別の商品なら、チェックしないでください。</strong>同じ商品なら、そのままチェックできます。</p>
+<p>★この警告が出ても、選べなくなるわけではありません。</p>
+<h2 id="sec11-3">11-3. カテゴリマスタ</h2>
+<p>カテゴリは3つの層でできています。</p>
+<pre>
+大分類  18個。集計するときにだけ使います（食費 ／ 日用雑貨 ／ 交通 …）
+中分類  66個。★実際に商品へ付けるのはこれ（食料品 ／ 外食 ／ 消耗品 …）
+小分類  大分類に紐付かないタグ。例：ふるさと納税 ／ 推し活
+</pre>
+<p>★中分類は<strong>大分類の下に並びます。</strong>移すこともできます（「どの大分類に移しますか？」）。</p>
+<p>★小分類は<strong>どの大分類にも属しません。</strong>横断して付けたい目印に使います。</p>
+<p>できること：</p>
+<pre>
+大分類を追加        名前を入れて〔追加〕
+中分類・小分類を追加  名前を入れて〔追加〕
+〔名前〕            名前を変える
+〔非表示〕／〔表示〕  選ぶときの一覧から外す／戻す
+〔削除〕            自分で作ったカテゴリだけ
+↑ ↓               並べ替える（大分類・中分類）
+</pre>
+<p>★カテゴリの横の「標準」「非表示」は、いまの状態を表す印です。</p>
+<p>★「標準」と表示されたカテゴリは<strong>削除できません。</strong>一度も使っていなくても同じです。</p>
+<p>　使わないカテゴリは「非表示」にしてください。選ぶときの一覧から外れます。</p>
+<p>★自分で作ったカテゴリは削除できます。</p>
+<h2 id="sec11-3-1">11-3-1. カテゴリのアイコンを変える</h2>
+<p>カテゴリマスタで、カテゴリの左のアイコンをタップすると選べます。</p>
+<pre>
+（上に区分のタブ）
+主食・穀物 ／ 肉・魚 ／ 野菜・果物 ／ 飲料 ／ 菓子・嗜好 ／ 調理・食卓 ／
+住居 ／ 光熱・水道 ／ 家具・家事 ／ 衣類・装身 ／ 保健医療 ／ 交通 ／
+通信・機器 ／ 教育 ／ 教養娯楽 ／ 動物・ペット ／ 植物・自然 ／
+金銭・記号 ／ 仕事・生活
+
+〔カメラで撮る〕〔写真から選ぶ〕
+〔既定のアイコンに戻す〕
+〔閉じる〕
+</pre>
+<p>★<strong>絵文字は437種</strong>あります。19の区分に分かれていて、上のタブで飛べます。</p>
+<h3 id="s1238">写真をアイコンにする</h3>
+<p><strong>写真の一部を切り出して、アイコンにできます。</strong></p>
+<pre>
+1.〔カメラで撮る〕または〔写真から選ぶ〕
+2.「アイコンにする範囲」で、使いたい部分を指で囲む
+3.〔この範囲をアイコンにする〕をタップする
+</pre>
+<p>★★レシートの読み違えを直すときの「範囲読み取り」（<a href="#sec3-6">→3-6</a>）と、</p>
+<p><strong>同じ操作</strong>です。</p>
+<p>★元に戻したいときは〔既定のアイコンに戻す〕です。</p>
+<p>★短縮登録のボタンのアイコンも、同じ選びかたです（<a href="#sec7-3">→7-3</a>）。</p>
+<h2 id="sec11-4">11-4. 支払方法マスタ</h2>
+<pre>
+名称              例：ギフト券
+読み取りキーワード 例：〇〇ペイ
+</pre>
+<p>★ここに登録した支払方法が、「レシートの確認」の候補に出ます（<a href="#sec3-3">→3-3</a>）。</p>
+<p>★名称を変えても、読み取りキーワードは変わりません。印字の表記も変えたときは、キーワードを足してください。</p>
+<p>★★支払方法が増えるのは、この画面で登録したときだけです。</p>
+<p>★<strong>読み取りキーワード</strong>を登録すると、レシートにその文字が印字されていたとき、</p>
+<p>　その支払方法が自動で選ばれます（<a href="#sec3-3">→3-3</a> の①）。</p>
+<p>★同じキーワードを2つの支払方法に登録することはできません。</p>
+<p>★「現金」「クレジットカード」のような語も、ここで足せばキーワードになります</p>
+<p>　（読み取りから自動で覚えることはしません）。</p>
+<h2 id="sec11-5">11-5. 税率マスタ</h2>
+<pre>
+軽減税率のカテゴリ
+　（自動でセットする分類を選ぶ）
+　〔過去のレシートを更新〕
+
+登録済みの税率
+　税率（%）／ 表示名 ／「組み込み」の表示
+　軽減税率（カテゴリを自動割当）
+　入力候補に出す
+　〔削除〕     ★組み込みの税率には出ません
+
+税率の追加
+　税率（%）／ 表示名
+　〔課税〕〔非課税・不課税〕
+　軽減税率（カテゴリを自動割当）  ★〔課税〕のときだけ出ます
+　〔＋ この内容で追加〕
+</pre>
+<p>★★<strong>過去のレシートの税率をあとから変える方法はありません。</strong></p>
+<p>　1件ずつ、レシートを開いて直してください。</p>
+<p>★〔過去のレシートを更新〕をタップすると、**軽減税率の明細に</p>
+<p>　「軽減税率のカテゴリ」で選んだ分類を付けます。**</p>
+<p>★手で付けたカテゴリと、商品マスタ・店舗マスタから付いたカテゴリは変わりません。</p>
+<p>★軽減税率でなくなった明細からは、自動で付けたこの分類を外します。</p>
+<pre>
+※ 手動で指定した明細は変わりません。
+※ 取り消せません。レシートの枚数によっては時間がかかります。
+</pre>
+<h2 id="sec11-6">11-6. マスタを直したときの「過去分」</h2>
+<p>マスタを直しても、<strong>保存済みのレシートは変わりません。</strong></p>
+<p>過去のレシートにも反映したいときは、マスタごとにやり方が違います。</p>
+<pre>
+お店のカテゴリ（<a href="#sec11-1">→11-1</a>）
+　変えた直後に確認画面が出ます：〔以降の分だけ〕〔過去分も更新〕
+　★もう一度カテゴリを変えれば、また確認画面が出ます
+商品のカテゴリ（<a href="#sec11-2">→11-2</a>・3-8）
+　変えた直後や、似た商品名を統一したあとに、同じ確認画面が出ます
+税率のカテゴリ（<a href="#sec11-5">→11-5</a>）
+　〔過去のレシートを更新〕をタップします。★何度でも実行できます
+</pre>
+<p>★★<strong>1件ずつ手で付けたカテゴリは、どちらの場合も変わりません。</strong></p>
+<p>★〔カテゴリをまとめて変更〕（<a href="#sec5-4">→5-4</a>）だけは、〔手動設定も上書き〕を選ぶと変わります。</p>
+<hr>
+<h1 id="sec12">12. 記録のしかた・画面の設定</h1>
+<p>設定の画面の「記録のしかた」と「画面の設定」でできることです。</p>
+<h2 id="sec12-1">12-1. 値引きの割り振り</h2>
+<pre>
+<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> →「記録のしかた」→「クーポン値引き・ポイント値引き」
+</pre>
+<p>値引きには、<strong>個別の商品が値引かれる場合</strong>と、<strong>小計より後にレシート全体から値引かれる場合</strong>があります。</p>
+<p>★全体から引かれた値引きを<strong>どう記録するかを選べます。</strong></p>
+<table>
+<tr><th></th><th>説明（画面に出る文言）</th></tr>
+<tr><td><strong>金額の割合で按分する</strong></td><td>レジと同じ計算です。金額の大きい商品ほど多く引かれます。</td></tr>
+<tr><td><strong>金額の多い明細から順に割り振る</strong></td><td>金額のいちばん大きい商品から順に引きます。安い商品には掛かりません。</td></tr>
+<tr><td><strong>支払方法として扱う（明細には割り振らない）</strong></td><td>値引き分も支払ったものとして記録します。カテゴリ別は値引き前の金額のままです。</td></tr>
+</table>
+<p>★既定は「金額の割合で按分する」です。</p>
+<p>★★<strong>変更しても、すでに保存したレシートは変わりません。</strong></p>
+<h2 id="sec12-2">12-2. 画面の設定</h2>
+<pre>
+<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> →「画面の設定」
+</pre>
+<p><strong>配色</strong>を7色から選べます。</p>
+<pre>
+茶 ／ 白（もとの色） ／ 山吹 ／ 緑 ／ 青 ／ 紫 ／ ピンク
+</pre>
+<p>★<strong>見た目だけの設定です。記録には影響しません。</strong></p>
+<hr>
+<h1 id="sec13">13. データを持ち出す・戻す</h1>
+<pre>
+<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> → まるごとバックアップ ／ 他のアプリとのやり取り
+</pre>
+<h2 id="sec13-1">13-1. まるごとバックアップ</h2>
+<pre>
+〔バックアップを作る〕
+　画像も含めてzipに書き出します
+〔バックアップを作る（画像なし）〕
+　軽く済ませたいとき
+〔バックアップから復元〕
+　いまの中身をすべて消して、その状態に戻します
+</pre>
+<p>★★このアプリは端末内にデータを記録しているので、端末を変えるときは</p>
+<p><strong>バックアップデータを新しい端末に引き継ぐ必要があります。</strong></p>
+<pre>
+古い端末
+　〔バックアップを作る〕
+　　↓
+　「バックアップを作りました」→〔別の場所へコピー〕
+　　↓
+　iCloud Drive やパソコンなど、端末の外に置く
+
+新しい端末
+　〔バックアップから復元〕→ 置いたバックアップを選ぶ
+</pre>
+<p>★★バックアップはアプリの中に作られます。〔閉じる〕で終えると、古い端末の中にしか残りません。</p>
+<p>★画像も引き継ぐときは〔バックアップを作る〕を使ってください。〔バックアップを作る（画像なし）〕には画像が入りません。</p>
+<p>★★<strong>画像なしのバックアップを復元すると、いま端末にあるレシートの画像はすべて消えます。</strong></p>
+<p>★バックアップが大きくなったときは、要らない画像を先に削除すると小さくなります（<a href="#sec5-4">→5-4</a>）。</p>
+<p>★復元は「全置き換え」です。実行前に、次の確認画面が出ます。</p>
+<pre>
+復元しますか
+
+バックアップの中身
+　レシート ○○ 件
+　画像 ○○ 枚
+　マスタ ○○ 件
+
+いまの端末にある レシート ○○ 件とマスタは、すべて消えます。
+この操作は取り消せません。
+画像が多いと、復元に時間がかかります。
+</pre>
+<p>★★<strong>件数を見比べてから決められます。</strong></p>
+<p>★「マスタ」の件数には、設定・短縮登録・繰返登録・ホームの並びも含まれます。<strong>復元すると、これらも元に戻ります。</strong></p>
+<p>★画像の入っていないバックアップを選ぶと、「画像が1枚も入っていません」と注意が出ます。</p>
+<p>　そのまま復元すると、いま端末にあるレシートの画像は使われなくなります。</p>
+<h2 id="sec13-2">13-2. 書き出す（CSV / JSON）</h2>
+<pre>
+〔汎用CSV（Excel・スプレッドシート向け）〕
+〔JSON（汎用CSVと同じ内容。自作ツール向け）〕
+</pre>
+<pre>
+1行＝1商品（値引きの行は、マイナスの金額の行として出ます）
+金額は税込に統一（税抜の列も併記）
+文字コード UTF-8（BOM付き）／ 改行 CRLF
+
+列の順  日付 ／ 店名 ／ 商品名 ／ 中分類 ／ 小分類 ／ 個数 ／ 単位 ／ 単価 ／
+        税込金額 ／ 税抜金額 ／ 税率 ／ 値引き ／ 支払方法 ／ メモ ／ レシートID
+</pre>
+<p>★Excelでそのまま開けます（文字化けしません）。</p>
+<p>★汎用CSVとJSONは、読み戻せます（<a href="#sec13-3">→13-3</a>）。</p>
+<h2 id="sec13-3">13-3. 取り込む（CSV・JSON）</h2>
+<p>ほかの家計簿アプリからの乗り換えに使えます。</p>
+<pre>
+1.〔CSV・JSONファイルを選択〕
+2. どの列が日付か、金額か、を自動で推測します
+3. ★合っていなければ、自分で直せます
+4.〔取り込み〕
+5. 「取り込みますか？」→〔追加する〕または〔入れ替える〕
+</pre>
+<table>
+<tr><th></th><th>何が起きるか</th></tr>
+<tr><td><strong>追加する</strong></td><td>いまの記録はそのまま。取り込んだ分を足します</td></tr>
+<tr><td><strong>入れ替える</strong></td><td>★いまのレシートを削除してから取り込みます</td></tr>
+</table>
+<p>★★〔入れ替える〕は、もう一度確認が出ます。</p>
+<p>「店舗マスタは、レシートが1件も無くなったものだけ消えます。カテゴリ・商品・支払方法のマスタは消えません。</p>
+<p>この操作は取り消せません。」</p>
+<p>そこで〔削除して取り込む〕をタップすると実行されます。</p>
+<p>★決まった形式でなくても取り込めます。</p>
+<p>★日付は <code>2026/09/01</code> <code>2026-09-01</code> <code>2026.9.1</code> <code>2026年9月1日</code> <code>令和8年9月1日</code> <code>平成31年4月30日</code> <code>R8.9.1</code> に対応しています。</p>
+<p>★日付と店名が同じ行は、1枚のレシートにまとめます。</p>
+<p>★中分類・小分類は、<strong>名前が完全に一致したものだけ</strong>引き継ぎます。一致しなかった明細は中分類「その他」になります。</p>
+<p>★取り込んだレシートは、一覧で「ほかのアプリから移してきた」のアイコンになり、アカゲラのヒナには数えません（<a href="#sec4-1">→4-1</a>・10-1）。</p>
+<p>★支出をマイナスで書き出すアプリにも対応します（負の行が多ければ全行の符号を反転）。</p>
+<p>★★<strong>収入と思われる行は取り込みません。</strong>符号をそろえたあと、ほかの行と金額の向きが逆の行のことです。</p>
+<p>　返品・返金の行も同じ扱いになります。取り込む前の確認に、除いた行の数が出ます。</p>
+<p>★このアプリで書き出した汎用CSV・JSON（<a href="#sec13-2">→13-2</a>）は、値引きの行もそのまま戻ります。</p>
+<p>★★<strong>JSONは、このアプリで書き出したものだけ取り込めます。</strong>中身は汎用CSVと同じ扱いです。</p>
+<hr>
+<h1 id="sec14">14. 困ったときは</h1>
+<h2 id="sec14-1">14-1. レシートがうまく読めない</h2>
+<pre>
+□ ★レシート全体が画面に入っているか
+□ 明るい場所か。影が落ちていないか
+□ 折り目・しわを伸ばしたか
+□ 感熱紙が褪せていないか（時間が経つと薄くなります）
+</pre>
+<p>★★<strong>いちばん効くのは「画面いっぱいに、まっすぐ」です。</strong></p>
+<p>紙が小さく写ると、税マーク（「外8」など）の小さな文字が読めなくなります。</p>
+<p>少し離れて撮るだけで、読める行がぐっと減ります。</p>
+<p>★読めなくても大丈夫です。<strong>「レシートの確認」で直せます。</strong></p>
+<p>特に<strong>範囲読み取り</strong>（<a href="#sec3-6">→3-6</a>）が効きます。</p>
+<h3 id="s1435">通うほど、読めるようになります</h3>
+<p>レシートの印字の形は、お店によってかなり違います。</p>
+<p>そのため、<strong>初めてのお店では直していただくことが増えます。</strong></p>
+<p>★同じお店で何度か記録すると、</p>
+<pre>
+・「レシートの確認」で直して〔保存〕すると、そのお店の分として覚えます
+　　店名 ／〔要確認〕だった合計・消費税がどの行にあったか ／ 支払方法がどの行にあったか
+　　★次にそのお店を読み取るときに使います（店舗マスタとは別で、画面には出ません）
+・商品名が、そのお店で過去に保存した表記から候補に出ます（<a href="#sec3-3">→3-3</a>）
+・支払方法も、そのお店で使った回数の多い順に出ます（<a href="#sec3-3">→3-3</a>）
+</pre>
+<p>となり、直す手間が減っていきます。</p>
+<h3 id="s1447">どんなときに間違えるか</h3>
+<pre>
+・会計欄を商品として拾う
+　「外税」「決済合計」「ポイント残高」など
+・合計を取り違える
+　伝票番号の末尾やポイント残高を合計にする
+・金額が割れる・くっつく
+　「¥1,320」が「1ッ」＋「320」に割れる
+・商品名だけ落ちる
+　金額は取れているのに名前が空になる
+・かすれで数字が化ける
+　★「8」「9」が「3」に見える（<a href="#sec3-3">→3-3</a>の候補で直せます）
+</pre>
+<p>★これらは<strong>「レシートの確認」で直せます。</strong>直した内容は、次から候補として出ます（<a href="#sec3-3">→3-3</a>）。</p>
+<h2 id="sec14-2">14-2. ⚠ が消えない</h2>
+<p>明細の合計とレシートの合計が合っていません。</p>
+<pre>
+1. そのレシートを開く（<a href="#sec6-1">→6-1</a>）
+2. 差額と「どちらが多いか」を見る
+3. 合計の方が多い  → 明細が足りない。「読み取れたが取り込まなかった行」を見る
+   明細の方が多い  → 小計などを商品として拾っている。余分な明細を削除する
+</pre>
+<p>★直せば ⚠ は消えます。今月・先月に買ったレシートなら、<strong>アカゲラのヒナの[一致]も上がります</strong>（<a href="#sec10-2">→10-2</a>）。</p>
+<h2 id="sec14-3">14-3. 同じ商品が別の名前で記録されている</h2>
+<p>商品マスタで<strong>別名としてまとめて</strong>ください（<a href="#sec11-2">→11-2</a>）。</p>
+<pre>
+<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> → 商品マスタ →〔似た商品名を統一〕
+</pre>
+<h2 id="sec14-4">14-4. お店の名前がバラバラ</h2>
+<p>検索で絞り込んで、<strong>〔まとめて変更〕で正しい店名にまとめられます</strong>（<a href="#sec5-4">→5-4</a>）。</p>
+<p>★使われなくなった店名は、店舗マスタから自動で消えます。</p>
+<p>★複数のレシート写真を一回で取り込んだときは、その場で直せます（<a href="#sec2-5">→2-5</a>）。</p>
+<p>★店舗マスタには、名前を変える機能はありません。</p>
+<h2 id="sec14-5">14-5. 記録を全部消したい</h2>
+<p><strong>アプリを削除してください。</strong>記録はすべて端末の中にあるので、それだけで全部消えます。</p>
+<p>★★退会の手続きはありません。このアプリが、端末の外に記録を預けることもありません。</p>
+<p>★★<strong>あとで戻したいときは、削除する前に、バックアップを端末の外へ置いてください。</strong></p>
+<p>バックアップはアプリの中に作られるので、アプリを削除すると一緒に消えます。</p>
+<pre>
+<svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.33587 6.01628 L9.67063 3.30667 L14.3294 3.30667 L14.6641 6.01628 L15.275 6.32753 L15.85 6.70094 L18.364 5.63604 L20.6933 9.67063 L18.5141 11.3153 L18.55 12 L18.5141 12.6847 L20.6933 14.3294 L18.364 18.364 L15.85 17.2991 L15.275 17.6725 L14.6641 17.9837 L14.3294 20.6933 L9.67063 20.6933 L9.33587 17.9837 L8.725 17.6725 L8.15001 17.2991 L5.63604 18.364 L3.30667 14.3294 L5.48588 12.6847 L5.45 12 L5.48588 11.3153 L3.30667 9.67063 L5.63604 5.63604 L8.15001 6.70094 L8.725 6.32753 Z"/><circle cx="12" cy="12" r="2.95"/></svg> → まるごとバックアップ →〔バックアップを作る〕
+　↓
+「バックアップを作りました」→〔別の場所へコピー〕
+　↓
+iCloud Drive やパソコンなど、端末の外に置く
+</pre>
+<p>★端末の外に置いたバックアップや、書き出したファイル（<a href="#sec13-2">→13-2</a>）は、アプリを削除しても残ります。</p>
+<h2 id="sec14-6">14-6. 読み取り結果が間違っていないか心配</h2>
+<p>★<strong>自動の読み取りは万能ではありません。</strong>保存前に必ずご確認ください。</p>
+<p>確定申告など正確さが必要な用途では、<strong>原本と照合してください。</strong></p>
+<h2 id="sec14-7">14-7. 画面が真っ白になった</h2>
+<pre>
+画面の表示の失敗
+アプリの表示中に問題が起きました。下のボタンで開き直せます。
+
+★記録したレシートは端末に保存されています。この画面が出ても消えません。
+
+〔もう一度開く〕
+</pre>
+<p>★★<strong>記録は消えていません。</strong>この画面は表示の失敗であって、保存の失敗ではありません。</p>
+<p>★同じ画面で繰り返し出るときは、アプリをいったん終了してから開き直してください。</p>
+<p>★〔詳細〕を開くと原因が見られます。</p>
+<hr>
+<h1 id="s1509">付録　このアプリが「しないこと」</h1>
+<pre>
+外部への送信            しません
+　通信する仕組みが入っていません
+アカウント・ログイン    ありません
+広告                    ありません
+課金                    ありません
+利用状況の計測          しません
+収入の記録              しません
+　★記録するのは支出（レシート）だけです。給与などの収入は扱いません
+過去の記録を黙って書き換える  しません
+　★変えるときは確認します（<a href="#sec11-6">→11-6</a>）
+読み取った内容をあなたの〔保存〕なしに記録することはありません
+　★読み取りのときに自動で入る値もあります（店名・支払方法・カテゴリなど）。
+　　どれも「レシートの確認」で変えられ、〔保存〕するまで記録になりません
+　　（まとめて取り込みでは〔すべて保存〕）
+</pre>
+<hr>
+<h1 id="s1527">サポート</h1>
+<p>うまくいかないことがありましたら、サポートページからお知らせください。</p>
+<ul>
+<li><a href="./support.html">サポート・お問い合わせ</a></li>
+<li><a href="./index.html">プライバシーポリシー</a></li>
+<li><a href="./third-party-notices.html">オープンソースライセンス表記</a></li>
+</ul>
+</main>
+<script>
+(function () {
+  var box = document.getElementById('q');
+  var toc = document.getElementById('toc');
+  var noHit = document.getElementById('noHit');
+  var nav = document.getElementById('nav');
+  var pos = document.getElementById('pos');
+  var marks = [];
+  var at = 0;
+  /* ★まだ一度も動いていない状態。最初の〔次〕で**1件目へ**行かせるため */
+  var moved = false;
+  /* h1 ごとに1つの節にまとめる（章単位で出し入れする） */
+  var main = document.querySelector('main');
+  var secs = [];
+  var cur = null;
+  Array.prototype.slice.call(main.children).forEach(function (el) {
+    if (el.tagName === 'H1') {
+      cur = document.createElement('section');
+      cur.className = 'sec';
+      main.insertBefore(cur, el);
+      cur.appendChild(el);
+      secs.push(cur);
+    } else if (cur && el !== cur && !el.classList.contains('bar') && el.id !== 'toc' && el.id !== 'noHit') {
+      cur.appendChild(el);
+    }
+  });
+  /**
+   * 【v902】★★**目次を消さない。**絞ったうえで残す。
+   *
+   * ■ なぜ（ユーザー報告 2026-09-08）
+   * それまでは検索すると目次ごと隠していた。すると**行き先を選ぶ手段が無くなり、
+   * 残った章を自分でスクロールして探すことになる。**「飛べない」状態だった。
+   * ★アプリ内蔵版（ManualScreen）は目次の行を絞る作りで、押せば飛べる。
+   *   ★★この注記の中でバッククォートは使えない（SCRIPT全体がテンプレート文字列）。
+   *   **2つの版で動きが違っていた。**こちらを揃える。
+   */
+  var items = Array.prototype.slice.call(toc.querySelectorAll('li'));
+  items.forEach(function (li) {
+    var a = li.querySelector('a');
+    var id = a ? a.getAttribute('href').slice(1) : '';
+    var h = id ? document.getElementById(id) : null;
+    li.__sec = null;
+    li.__text = '';
+    if (!h) return;
+    /* ★見出しは上で section の中へ移してあるので、親をたどれば章が分かる */
+    for (var n = h; n; n = n.parentNode) {
+      if (n.classList && n.classList.contains('sec')) { li.__sec = n; break; }
+    }
+    if (h.tagName === 'H1') {
+      /* 章の見出し … その章まるごと */
+      li.__text = li.__sec ? li.__sec.textContent : h.textContent;
+    } else {
+      /**
+       * ★★節の見出し … **次の見出しまで**を自分の中身とする。
+       *   章まるごとで判定すると、「値引き」で電卓の節まで出てしまう（実測22項目）。
+       */
+      var t = h.textContent;
+      var e = h.nextElementSibling;
+      while (e && e.tagName !== 'H1' && e.tagName !== 'H2') {
+        t += e.textContent;
+        e = e.nextElementSibling;
+      }
+      li.__text = t;
+    }
+  });
+
+  /**
+   * 【v902】★★**見つけた言葉に色を塗る。**
+   *
+   * ■ なぜ（ユーザー報告 2026-09-08）
+   * 章や節まで絞れても、**その言葉が節のどこにあるかは目で探すことになる。**
+   *
+   * ■ ★タグを壊さないやり方
+   * 文字列の置換でやると svg タグの属性の中まで書き換えてしまう
+   * （★v902 でアイコンが壊れたのと同じ形）。**文字のかたまりだけを歩く。**
+   * ★★この注記でバッククォートは使えない（SCRIPT全体がテンプレート文字列）。**2回踏んだ。**
+   */
+  function clearMarks(root) {
+    var ms = Array.prototype.slice.call(root.querySelectorAll('mark.hit'));
+    ms.forEach(function (m) {
+      m.parentNode.replaceChild(document.createTextNode(m.textContent), m);
+    });
+    if (ms.length > 0) root.normalize();
+  }
+
+  function paint(root, q) {
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var targets = [];
+    var n;
+    while ((n = walker.nextNode())) {
+      if (n.nodeValue.indexOf(q) >= 0) targets.push(n);
+    }
+    targets.forEach(function (node) {
+      var parts = node.nodeValue.split(q);
+      var frag = document.createDocumentFragment();
+      parts.forEach(function (p, i) {
+        if (i > 0) {
+          var m = document.createElement('mark');
+          m.className = 'hit';
+          m.textContent = q;
+          frag.appendChild(m);
+        }
+        if (p) frag.appendChild(document.createTextNode(p));
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+
+  function run() {
+    var q = box.value.trim();
+    clearMarks(main);
+    if (!q) {
+      secs.forEach(function (s) { s.classList.remove('hide'); });
+      items.forEach(function (li) { li.classList.remove('hide'); });
+      toc.style.display = '';
+      noHit.style.display = 'none';
+      return;
+    }
+    var hit = 0;
+    secs.forEach(function (s) {
+      var ok = s.textContent.indexOf(q) >= 0;
+      s.classList.toggle('hide', !ok);
+      if (ok) hit += 1;
+    });
+    items.forEach(function (li) {
+      li.classList.toggle('hide', li.__text.indexOf(q) < 0);
+    });
+    toc.style.display = hit === 0 ? 'none' : '';
+    noHit.style.display = hit === 0 ? '' : 'none';
+    if (hit > 0) {
+      secs.forEach(function (s) { if (!s.classList.contains('hide')) paint(s, q); });
+      paint(toc, q);
+    }
+    /**
+     * 【v902】★★**該当箇所まで送れるようにする。**
+     * 章や節まで絞っても、**そこから先は目で探すことになる**（ユーザー報告）。
+     * 色を塗るだけでは足りなかったので、1件ずつ移動できるようにした。
+     * ★目次の色は数えない（本文の中だけを送る）。
+     */
+    marks = Array.prototype.slice.call(main.querySelectorAll('mark.hit')).filter(function (m) {
+      for (var n = m; n; n = n.parentNode) {
+        if (n.id === 'toc') return false;
+      }
+      return true;
+    });
+    at = 0;
+    moved = false;
+    if (marks.length > 0) {
+      nav.classList.add('on');
+      show(0, false);
+    } else {
+      nav.classList.remove('on');
+      pos.textContent = '';
+    }
+  }
+
+  /** 何件目かを出して、そこへ動かす */
+  function show(i, move) {
+    if (marks.length === 0) return;
+    at = (i + marks.length) % marks.length;
+    marks.forEach(function (m) { m.classList.remove('now'); });
+    var m = marks[at];
+    m.classList.add('now');
+    pos.textContent = at + 1 + ' / ' + marks.length + '件';
+    if (move !== false) m.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+  box.addEventListener('input', run);
+
+  /**
+   * 【v902】★★**絞り込み中に「→8-3」を押しても飛べなかった。**
+   *
+   * 飛び先の章が hide になっていると、ブラウザは動かない。
+   * 実測：「値引き」で絞ると、見えているリンク23本のうち**3本が死んでいた。**
+   * → 押されたら**絞り込みを解いてから**飛ぶ。
+   * ★検索欄も空にする。**絞ったままに見えて中身が全部出ている**状態を作らない。
+   */
+  main.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href^="#sec"]') : null;
+    if (!a) return;
+    if (!box.value.trim()) return;
+    box.value = '';
+    run();
+  });
+  document.getElementById('prev').addEventListener('click', function () {
+    if (!moved) { moved = true; show(at, true); return; }
+    show(at - 1, true);
+  });
+  document.getElementById('next').addEventListener('click', function () {
+    if (!moved) { moved = true; show(at, true); return; }
+    show(at + 1, true);
+  });
+})();
+</script>
+</body>
+</html>
